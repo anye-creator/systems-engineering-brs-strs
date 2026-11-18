@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>小组作业2 · 概念定义 — BRS 与 StRS（校园自动驾驶微循环接驳系统）</title>
+<meta name="description" content="系统工程课程小组作业2：按 ISO/IEC/IEEE 29148 表4-1 与表4-5 框架，输出业务需求规格说明（BRS）与相关方需求规格说明（StRS），含业务/任务分析、ConOps、OpsCon、相关方列表与相关方需求。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%2314201D'/%3E%3Cpath d='M7 24V8m0 8h18M7 24h18' stroke='%23EDEEE9' stroke-width='2.2' fill='none'/%3E%3Ccircle cx='25' cy='16' r='3.4' fill='%239C3A24'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="https://miaoda.feishu.cn/fonts/css2?family=Noto+Serif+SC:wght@500;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --paper:#EDEEE9;
+  --paper-2:#F6F7F3;
+  --ink:#14201D;
+  --ink-2:#33423E;
+  --muted:#6E7B76;
+  --line:#CFD5CB;
+  --line-2:#DFE3DB;
+  --blue:#1D4763;
+  --blue-w:#E3EAF0;
+  --rust:#9C3A24;
+  --rust-w:#F2E4DF;
+  --amber:#A8752A;
+  --serif:"Noto Serif SC","Songti SC",Georgia,serif;
+  --sans:"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif;
+  --mono:"JetBrains Mono","SFMono-Regular",Consolas,monospace;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:var(--sans);font-size:16px;line-height:1.78;
+  -webkit-font-smoothing:antialiased;
+}
+img,svg{max-width:100%}
+a{color:var(--blue);text-decoration:none;border-bottom:1px solid rgba(29,71,99,.3)}
+a:hover{color:var(--rust);border-bottom-color:rgba(156,58,36,.4)}
+
+/* ===== 顶部规格书封面 ===== */
+.doc-head{
+  position:relative;background:var(--ink);color:var(--paper);
+  padding:64px 40px 52px;overflow:hidden;
+}
+.doc-head::before{
+  content:"";position:absolute;inset:0;
+  background-image:linear-gradient(rgba(237,238,233,.055) 1px,transparent 1px),
+                    linear-gradient(90deg,rgba(237,238,233,.055) 1px,transparent 1px);
+  background-size:64px 64px;pointer-events:none;
+}
+.doc-head .inner{position:relative;max-width:1180px;margin:0 auto;display:grid;grid-template-columns:1fr 300px;gap:56px;align-items:end}
+.masthead{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:#9FADA6;margin-bottom:26px}
+.doc-head h1{
+  font-family:var(--serif);font-weight:700;font-size:44px;line-height:1.28;
+  margin:0 0 18px;letter-spacing:.01em;
+}
+.doc-head h1 em{font-style:normal;color:#C9D6D2}
+.doc-head .sub{font-size:16px;line-height:1.85;color:#C3CDC8;max-width:40em;margin:0 0 26px}
+.doc-head .sys-name{
+  display:inline-block;font-family:var(--mono);font-size:12px;letter-spacing:.06em;
+  border:1px solid rgba(237,238,233,.35);padding:7px 12px;color:#E7EAE4;
+}
+.spec-table{width:100%;border-collapse:collapse;font-size:12.5px;line-height:1.6;font-family:var(--mono)}
+.spec-table th,.spec-table td{border-top:1px solid rgba(237,238,233,.2);padding:9px 0;text-align:left;vertical-align:top}
+.spec-table th{color:#93A29B;font-weight:400;letter-spacing:.08em;width:38%}
+.spec-table td{color:#E4E8E1}
+
+/* ===== 版式：目录 + 文档主体 ===== */
+.layout{max-width:1180px;margin:0 auto;padding:0 40px 96px;display:grid;grid-template-columns:196px 1fr;gap:64px;align-items:start}
+.toc{position:sticky;top:24px;padding:36px 0 0}
+.toc-label{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;color:var(--muted);margin-bottom:16px}
+.toc a{display:block;font-size:13px;line-height:1.5;color:var(--ink-2);border:0;padding:5px 0 5px 12px;border-left:2px solid transparent;transition:color .18s,border-color .18s}
+.toc a:hover{color:var(--rust);border-left-color:var(--rust)}
+.toc a .n{font-family:var(--mono);font-size:10.5px;color:var(--muted);margin-right:7px}
+.toc .grp{font-size:11.5px;color:var(--muted);letter-spacing:.06em;margin:18px 0 4px;padding-left:12px}
+
+main{min-width:0;padding-top:8px}
+
+/* ===== 章节 ===== */
+.chapter{padding:54px 0 0;scroll-margin-top:20px}
+.chapter + .chapter{border-top:1px solid var(--line);margin-top:56px}
+.ch-head{display:flex;align-items:baseline;gap:16px;margin-bottom:10px}
+.ch-num{font-family:var(--mono);font-size:12px;letter-spacing:.1em;color:var(--rust);padding-top:8px;flex:none}
+.chapter h2{font-family:var(--serif);font-weight:700;font-size:29px;line-height:1.4;margin:0;letter-spacing:.01em}
+.chapter h2 .en{display:block;font-family:var(--mono);font-weight:400;font-size:11.5px;letter-spacing:.10em;color:var(--muted);margin-top:8px}
+.lede{color:var(--ink-2);font-size:15.5px;margin:6px 0 30px;max-width:44em}
+h3{font-family:var(--sans);font-weight:700;font-size:17.5px;line-height:1.6;margin:40px 0 12px;letter-spacing:.01em}
+h3 .h3-n{font-family:var(--mono);font-weight:400;font-size:11.5px;color:var(--muted);margin-right:10px}
+h4{font-size:14px;font-weight:700;color:var(--blue);margin:24px 0 8px;letter-spacing:.02em}
+p{margin:0 0 16px;max-width:44em}
+p.body-ind{text-indent:2em}
+strong{font-weight:700}
+.keyflag{
+  display:inline-block;font-family:var(--mono);font-size:10px;letter-spacing:.12em;
+  color:var(--rust);border:1px solid rgba(156,58,36,.45);padding:2px 7px;
+  margin-left:12px;vertical-align:2px;
+}
+
+/* ===== 表格 ===== */
+.tbl-wrap{margin:22px 0 30px;overflow-x:auto}
+table.data{width:100%;border-collapse:collapse;table-layout:fixed;font-size:13px;line-height:1.66;background:var(--paper-2)}
+table.data caption{caption-side:top;text-align:left;font-family:var(--mono);font-size:11.5px;color:var(--muted);padding-bottom:9px;letter-spacing:.04em}
+table.data th{background:#DCE1D7;color:var(--ink);font-weight:700;text-align:left;padding:10px 10px;border:1px solid var(--line);font-size:12.5px}
+table.data td{padding:10px 10px;border:1px solid var(--line);vertical-align:top;word-break:break-word}
+table.data td.id{font-family:var(--mono);font-size:11.8px;color:var(--blue);letter-spacing:.02em}
+table.data tr.sub th{background:#EDEFE8;font-weight:500;color:var(--ink-2)}
+.note{font-size:12.5px;color:var(--muted);line-height:1.7;margin:-12px 0 28px;max-width:46em}
+
+/* ===== 结构块 ===== */
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:24px 0 30px;border:1px solid var(--line);background:var(--paper-2)}
+.duo > div{padding:20px 22px}
+.duo > div:first-child{border-right:1px solid var(--line)}
+.duo h5{margin:0 0 4px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);font-weight:400}
+.duo h5 b{font-family:var(--serif);font-size:16px;letter-spacing:0;color:var(--ink);display:block;margin-top:6px}
+.duo dl{margin:12px 0 0;font-size:13px;line-height:1.7}
+.duo dt{font-weight:700;color:var(--blue);font-size:12px;margin-top:9px}
+.duo dd{margin:2px 0 0;color:var(--ink-2)}
+
+.box{border-top:2px solid var(--ink);background:var(--paper-2);padding:22px 24px 6px;margin:24px 0 30px}
+.box .box-t{font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--muted);margin-bottom:14px}
+.box ul{margin:0 0 14px;padding-left:18px}
+.box li{margin:0 0 8px;font-size:14px;line-height:1.72;color:var(--ink-2)}
+.rule{list-style:none;padding:0;margin:0 0 18px}
+.rule li{display:grid;grid-template-columns:44px 1fr;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:14px;line-height:1.7}
+.rule li span.k{font-family:var(--mono);font-size:11px;color:var(--rust);padding-top:5px}
+
+/* ===== 图表 ===== */
+.chart{background:var(--paper-2);border:1px solid var(--line);padding:24px 18px 12px;margin:26px 0 10px}
+.chart-h{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--muted);padding:0 6px 14px}
+#scatter{width:100%;height:420px}
+#bar{width:100%;height:340px}
+.chart-fallback{display:none;font-size:13px;padding:12px 6px 18px;color:var(--ink-2)}
+
+/* 场景卡 */
+.scenes{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:24px 0 8px;border-top:1px solid var(--line)}
+.scene{padding:22px 22px 22px 0;border-bottom:1px solid var(--line-2)}
+.scene:nth-child(odd){border-right:1px solid var(--line-2);padding-right:24px}
+.scene:nth-child(even){padding-left:24px}
+.scene .sid{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:var(--rust)}
+.scene h5{margin:6px 0 8px;font-family:var(--serif);font-size:17px;font-weight:700;line-height:1.45}
+.scene p{font-size:13.5px;line-height:1.75;color:var(--ink-2);margin:0 0 10px;max-width:none}
+.scene .deriv{font-size:12px;color:var(--blue);font-family:var(--mono);line-height:1.7;border-top:1px dotted var(--line);padding-top:9px}
+
+/* 需求条目：分组标识 */
+.group-tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;color:#fff;background:var(--blue);padding:3px 8px;display:inline-block;margin:30px 0 2px}
+
+/* SVG 图 */
+.fig{background:var(--paper-2);border:1px solid var(--line);padding:22px;margin:26px 0}
+.fig svg{display:block;width:100%;height:auto}
+.figcap{font-size:12px;color:var(--muted);margin-top:12px;line-height:1.6}
+
+/* 追溯 */
+.matrix-note{display:flex;gap:22px;flex-wrap:wrap;font-family:var(--mono);font-size:11.5px;color:var(--muted);margin:14px 0 0}
+.matrix-note span::before{content:"";display:inline-block;width:9px;height:9px;margin-right:7px;vertical-align:1px}
+
+/* 页脚 */
+.foot{border-top:1px solid rgba(237,238,233,.2);background:var(--ink);color:#9FADA6;padding:40px;margin-top:0}
+.foot .inner{max-width:1180px;margin:0 auto;display:flex;flex-wrap:wrap;gap:28px;justify-content:space-between;font-size:12px;line-height:1.8}
+.foot .inner div{max-width:34em}
+.foot b{color:#DDE3DC;font-weight:500;display:block;margin-bottom:4px;font-family:var(--mono);font-size:11px;letter-spacing:.12em}
+
+/* 规格书章节（BRS/StRS 内部结构） */
+.spec h3.sp{display:flex;gap:14px;align-items:baseline;font-weight:700;font-size:15.5px;color:var(--ink);margin:26px 0 8px;padding-bottom:6px;border-bottom:1px dotted var(--line)}
+.spec h3.sp .sn{font-family:var(--mono);font-size:11.5px;color:var(--rust);flex:none;min-width:32px;font-weight:400}
+.spec p{font-size:14.5px;line-height:1.8;color:var(--ink-2);max-width:46em}
+.spec .tbl-wrap{margin:16px 0 22px}
+.docband{display:flex;flex-wrap:wrap;gap:10px;align-items:center;background:var(--blue-w);padding:14px 18px;margin:6px 0 22px;font-family:var(--mono);font-size:11.5px;color:var(--blue);letter-spacing:.04em}
+.docband b{font-weight:600}
+.docband i{font-style:normal;color:var(--muted)}
+
+/* 流程条 */
+.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:20px 0 26px}
+.flow div{background:var(--paper-2);border:1px solid var(--line);border-top:2px solid var(--blue);padding:12px 12px 14px;font-size:12.5px;line-height:1.65}
+.flow div .fn{font-family:var(--mono);font-size:10px;color:var(--rust);display:block;margin-bottom:5px}
+.flow div b{display:block;font-size:13.5px;color:var(--ink);margin-bottom:3px}
+
+/* 状态图 */
+/* 相关方矩阵 */
+.after-fig{font-size:13px;line-height:1.78;color:var(--muted);margin:16px 0 0;max-width:48em}
+.matrix{display:grid;grid-template-columns:64px repeat(3,1fr);grid-template-rows:34px repeat(3,minmax(104px,auto));gap:0;border:1px solid var(--line);margin:22px 0 12px;background:var(--paper-2)}
+.mx-corner{background:#DCE1D7;border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.mx-col{display:flex;align-items:center;justify-content:center;background:#DCE1D7;border-bottom:1px solid var(--line);border-right:1px solid var(--line);font-size:11.5px;color:var(--ink-2);letter-spacing:.04em}
+.mx-col:last-child{border-right:0}
+.mx-row{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:#E7EAE2;border-right:1px solid var(--line);border-bottom:1px solid var(--line);text-align:center;line-height:1.2}
+.mx-row .k{font-family:var(--serif);font-size:15px;color:var(--ink);font-weight:700}
+.mx-row .lbl{font-size:9px;color:var(--muted);letter-spacing:.12em}
+.mx-row:last-child{border-bottom:0}
+.cell{padding:11px 10px;border-right:1px solid var(--line-2);border-bottom:1px solid var(--line-2);display:flex;flex-wrap:wrap;align-content:flex-start;gap:4px}
+.cell:last-child{border-right:0}
+.cell.hot{background:#E6EDF1}
+.cell.warm{background:#F4F0E5}
+.cell.cool{background:#EFF1EA}
+.cell .cap{width:100%;font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;color:var(--muted);margin-bottom:3px}
+.cell.empty .dash{font-family:var(--mono);color:#B4BDB2;font-size:12px}
+.chip{display:inline-block;flex:none;white-space:nowrap;font-family:var(--mono);font-size:10px;line-height:1.5;padding:2px 5px;border:1px solid rgba(29,71,99,.55);color:var(--blue);background:#fff}
+.chip.neg{border-color:rgba(156,58,36,.6);color:var(--rust)}
+.chip.mid{border-color:rgba(110,123,118,.6);color:var(--ink-2)}
+@media (max-width:760px){
+  .matrix{grid-template-columns:62px repeat(3,1fr)}
+  .cell{padding:7px 5px}
+  .chip{font-size:9px;padding:1px 3px}
+  .mx-col{font-size:10px}
+}
+
+@media (max-width:1100px){
+  .doc-head .inner{grid-template-columns:1fr;gap:34px;align-items:start}
+  .spec-table{max-width:420px}
+  .layout{grid-template-columns:1fr;gap:0;padding:0 28px 64px}
+  .toc{position:static;padding:26px 0 22px;border-bottom:1px solid var(--line)}
+  .toc a{display:inline-block;padding:4px 10px;border-left:0;border-bottom:2px solid transparent}
+  .toc a:hover{border-left:0;border-bottom-color:var(--rust)}
+  .toc .grp{display:none}
+  .toc-label{margin-bottom:10px}
+}
+@media (max-width:760px){
+  table.data{min-width:560px}
+  .fig{overflow-x:auto}
+  .fig svg{min-width:560px}
+  .tbl-wrap::after{content:"← 左右滑动查看完整表格";display:block;font-size:10.5px;letter-spacing:.04em;color:var(--muted);padding:6px 2px 0;font-family:var(--mono)}
+  .fig::after{content:"← 左右滑动查看完整示意图";display:block;font-size:10.5px;letter-spacing:.04em;color:var(--muted);padding-top:8px;font-family:var(--mono)}
+  .toc a{padding:8px 10px}
+  .doc-head{padding:44px 26px 36px}
+  .doc-head h1{font-size:31px}
+  .doc-head .sub{font-size:14.5px}
+  .layout{padding:0 20px 56px}
+  .chapter h2{font-size:23px}
+  .duo,.scenes{grid-template-columns:1fr}
+  .duo > div:first-child{border-right:0;border-bottom:1px solid var(--line)}
+  .scene:nth-child(odd){border-right:0;padding-right:0}
+  .scene:nth-child(even){padding-left:0}
+  .chart{padding:18px 8px 8px}
+  #scatter{height:360px}
+  table.data{font-size:12px}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<!-- ===== 文档封面 ===== -->
+<header class="doc-head">
+  <div class="inner">
+    <div>
+      <div class="masthead">系统工程 · 第4章 概念定义 · 小组作业2</div>
+      <h1>从业务问题到<br><em>相关方需求</em></h1>
+      <p class="sub">按 ISO/IEC/IEEE 29148:2018 的 BRS 与 StRS 范本框架，对一个待开发的校园运输系统完成业务/任务分析、运行概念定义与相关方需求定义，形成可评审、可追溯的两份规格说明。</p>
+      <span class="sys-name">SoI：校园自动驾驶微循环接驳系统</span>
+    </div>
+    <table class="spec-table">
+      <tr><th>交付物</th><td>BRS + StRS</td></tr>
+      <tr><th>框架依据</th><td>表4-1 / 表4-5</td></tr>
+      <tr><th>过程依据</th><td>15288 · 29148</td></tr>
+      <tr><th>相关方</th><td>14 类</td></tr>
+      <tr><th>需求条目</th><td>18 条（UR）</td></tr>
+      <tr><th>版本 / 日期</th><td>v1.0 / 2026-11-18</td></tr>
+    </table>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="toc" aria-label="目录">
+    <div class="toc-label">CONTENTS</div>
+    <div class="grp">问题域</div>
+    <a href="#sys"><span class="n">01</span>系统边界与设定</a>
+    <a href="#analysis"><span class="n">02</span>业务/任务分析</a>
+    <a href="#concept"><span class="n">03</span>ConOps 与 OpsCon</a>
+    <div class="grp">需求定义</div>
+    <a href="#stakeholders"><span class="n">04</span>相关方列表</a>
+    <a href="#needs"><span class="n">05</span>相关方需求</a>
+    <div class="grp">规格说明</div>
+    <a href="#brs"><span class="n">06</span>BRS 业务需求规格</a>
+    <a href="#strs"><span class="n">07</span>StRS 相关方需求规格</a>
+    <a href="#trace"><span class="n">08</span>追溯与评审自检</a>
+  </nav>
+
+  <main>
+
+  <!-- ===== 01 系统边界与设定 ===== -->
+  <section class="chapter" id="sys">
+    <div class="ch-head"><div class="ch-num">01</div>
+      <h2>系统边界与本文设定<span class="en">SYSTEM OF INTEREST &amp; SCOPE</span></h2>
+    </div>
+    <p class="lede">需求定义的第一个动作不是写需求，而是把“所关心的系统”（SoI）画清楚：它替谁解决什么问题、边界在哪里、哪些是它的运行环境而不是它本身。</p>
+
+    <p>本文以<strong>校园自动驾驶微循环接驳系统</strong>（Campus Autonomous Micro-transit，下称 CAMT）作为小组作业的 SoI。它是一个低速、限定区域、按需调度的运输服务系统，服务于一个约 2.4 km²† 的多校区校园：以 6 台 L4 级低速接驳车为运力单元，串联 18 个站点†，由云端调度平台统一派单，并依赖路侧感知、校园专网与充电设施维持连续运行。系统的使命不是“造六台车”，而是在校园内提供一段可预期、全天候、无障碍的位移服务。</p>
+
+    <p>边界划定的判据是控制权与责任归属：车辆本体、车载感知与决策、调度平台、站牌交互终端、专用充电位属于 SoI；市政道路信号系统、公共交通线路、校园既有校车、共享单车、校园电网与运营商网络属于运行环境中的外部实体或使能系统，只通过接口与 SoI 交互。这一区分直接决定了后文相关方的分类方式，也避免把“校园所有交通问题”都塞进一个系统的需求里。</p>
+
+    <div class="box">
+      <div class="box-t">文档约定 / CONVENTIONS</div>
+      <ul>
+        <li>带 <strong>†</strong> 的数值为小组讨论中设定的假设值，用于支撑需求的量化论证与验证准则设计，不是实测或校方公布数据。基线评审时须以实测或校方数据替换。</li>
+        <li>需求动词统一采用“应”（shall）表达强制项；目标性、愿望性表述降级为“宜”（should），并在理由栏注明。</li>
+        <li>编号规则：业务需求 <strong>BR-xx</strong>、相关方用户需求 <strong>StRS-UR-xx</strong>、运行场景 <strong>SC-x</strong>、相关方 <strong>S-xx</strong>，全篇唯一且被追溯矩阵引用。</li>
+        <li>本文的 SoI 为课程讨论选定；若小组最终选择的系统不同，第 02—05 章的分析方法与表结构可直接沿用，替换对象即可。</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ===== 02 业务/任务分析 ===== -->
+  <section class="chapter" id="analysis">
+    <div class="ch-head"><div class="ch-num">02</div>
+      <h2>业务/任务分析：先定义问题，再谈方案<span class="en">BUSINESS OR MISSION ANALYSIS</span><span class="keyflag">重点论述</span></h2>
+    </div>
+    <p class="lede">教材第 4.1 节给出的顺序是：识别问题与机会 → 描述解决方案空间特性 → 评估可选解决方案类。跳过前两步直接进入“做一个自动驾驶小巴”，正是后期需求反复变更的根源。</p>
+
+    <h3><span class="h3-n">2.1</span>现状、差距与机会（三对标）</h3>
+    <p>校内通行的现状可以概括为“三高一低”：步行与两轮出行占比高、高峰时段潮汐拥堵高、恶劣天气与夜间的出行阻力高，而运力供给的确定性低。既有校车按固定班次与固定线路运行，平峰空驶、高峰挤不上；共享单车与私人电动车解决了“最后一公里”，却把无序停放与室内充电的消防隐患带进宿舍区；跨校区通行（约 1.8 km†）对携带行李、实验器材或行动不便的师生尤其不友好。</p>
+    <p>对标分三条线展开。对标标杆：同城已开通的园区低速接驳与机场摆渡，其共同特征是按需派单、谷段合并班次、以到站预测替代固定时刻表。对标自身：现有校车的客流数据只有刷卡计数，缺 OD（起讫点）与候车时长，运力投放凭经验，无法回答“哪一段最缺车”。对标未来：学校“十五五”校园规划提出绿色出行比例与无障碍通行覆盖率目标†，而现有交通组织方式无法支撑这一目标。三条线的交点，就是本项目的<strong>问题空间</strong>：在有限的校园路权与预算内，如何把出行服务的“确定性”做上去，同时不引入新的安全与秩序风险。</p>
+
+    <h3><span class="h3-n">2.2</span>用五类交互要素穷举外部实体</h3>
+    <p>相关方识别最容易犯的错误是只想到“用户”。教材 4.2.2 给出的方法是从系统的五类交互要素——信号、数据、物质、能量、活动——出发，逐一追问“谁在另一端”。下表即为 CAMT 的交互面盘点，它同时是第 04 章相关方列表的推导依据：凡在表中出现的外部实体所有者，都是待确认的相关方。</p>
+
+    <div class="tbl-wrap">
+      <table class="data">
+        <caption>表 2-1　CAMT 的五类交互要素与对端外部实体</caption>
+        <colgroup><col style="width:12%"><col style="width:26%"><col style="width:30%"><col style="width:32%"></colgroup>
+        <thead><tr><th>交互要素</th><th>本系统中的具体形态</th><th>对端外部实体</th><th>由此识别出的相关方</th></tr></thead>
+        <tbody>
+          <tr><td class="id">信号</td><td>车辆与站点的无线链路、路侧感知广播、车外声光提示、紧急呼叫</td><td>校园专网基站、路侧单元、行人</td><td>校园网络与数据中心；行人（学生、教职工、访客）</td></tr>
+          <tr><td class="id">数据</td><td>预约与派单、到站预测、OD 统计、视频与事件记录、OTA 升级包</td><td>调度云平台、校方数据中台、用户终端</td><td>校方信息化部门；师生用户；监管部门</td></tr>
+          <tr><td class="id">物质</td><td>乘车人员、行李与实验器材、备件、清洁与消杀物料</td><td>乘客、物流与备件供应商、后勤保洁</td><td>乘客；备件供应商；后勤集团</td></tr>
+          <tr><td class="id">能量</td><td>动力电池电能、充电桩供电、制动与热管理散热</td><td>校园配电网、充电运营商、消防系统</td><td>能源与充电设施所有者；消防与应急部门</td></tr>
+          <tr><td class="id">活动</td><td>上下车、招手拦停、安全员介入、人工清洁、故障拖离</td><td>乘客、远程安全员、现场运维人员</td><td>运营方与安全员；现场运维；保卫处</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="fig">
+      <svg viewBox="0 0 900 400" role="img" aria-label="CAMT 系统边界与外部实体交互示意图">
+        <rect x="14" y="14" width="872" height="372" fill="none" stroke="#CFD5CB" stroke-dasharray="7 5"/>
+        <text x="26" y="34" font-family="JetBrains Mono, monospace" font-size="11" fill="#6E7B76" letter-spacing="1.5">CAMPUS ENVIRONMENT / 运行环境边界</text>
+        <rect x="318" y="148" width="264" height="106" fill="#14201D"/>
+        <text x="450" y="188" text-anchor="middle" font-family="Noto Serif SC, serif" font-size="17" fill="#EDEEE9" font-weight="700">CAMT 所关心的系统</text>
+        <text x="450" y="212" text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="10" fill="#9FADA6" letter-spacing="1">车辆 · 调度平台 · 站点 · 充电位</text>
+        <text x="450" y="234" text-anchor="middle" font-family="Noto Sans SC, sans-serif" font-size="10.5" fill="#C3CDC8">边界内：控制权与责任归属</text>
+        <g font-family="Noto Sans SC, sans-serif" font-size="12" fill="#14201D">
+          <rect x="60" y="62" width="150" height="48" fill="#F6F7F3" stroke="#CFD5CB"/><text x="135" y="82" text-anchor="middle">乘客 / 师生</text><text x="135" y="99" text-anchor="middle" font-size="10" fill="#6E7B76">活动 · 物质</text>
+          <rect x="60" y="300" width="150" height="48" fill="#F6F7F3" stroke="#CFD5CB"/><text x="135" y="320" text-anchor="middle">校园配电网</text><text x="135" y="337" text-anchor="middle" font-size="10" fill="#6E7B76">能量</text>
+          <rect x="690" y="62" width="150" height="48" fill="#F6F7F3" stroke="#CFD5CB"/><text x="765" y="82" text-anchor="middle">校园专网 / 数据中台</text><text x="765" y="99" text-anchor="middle" font-size="10" fill="#6E7B76">信号 · 数据</text>
+          <rect x="690" y="300" width="150" height="48" fill="#F6F7F3" stroke="#CFD5CB"/><text x="765" y="320" text-anchor="middle">保卫处 / 交管 / 消防</text><text x="765" y="337" text-anchor="middle" font-size="10" fill="#6E7B76">活动 · 信号</text>
+          <rect x="300" y="52" width="160" height="42" fill="#F6F7F3" stroke="#CFD5CB"/><text x="380" y="78" text-anchor="middle">校园道路与行人流</text>
+          <rect x="500" y="52" width="160" height="42" fill="#F6F7F3" stroke="#CFD5CB"/><text x="580" y="78" text-anchor="middle">既有校车 / 共享两轮</text>
+          <rect x="300" y="318" width="160" height="42" fill="#F6F7F3" stroke="#CFD5CB"/><text x="380" y="344" text-anchor="middle">充电运营商 / 消防</text>
+          <rect x="500" y="318" width="160" height="42" fill="#F6F7F3" stroke="#CFD5CB"/><text x="580" y="344" text-anchor="middle">备件 / 车辆供应商</text>
+        </g>
+        <g stroke="#1D4763" stroke-width="1" fill="none" opacity=".8">
+          <path d="M210 86 L318 160"/><path d="M130 300 L318 222"/>
+          <path d="M690 86 L582 160"/><path d="M690 300 L582 232"/>
+          <path d="M380 94 L400 148"/><path d="M580 94 L510 148"/>
+          <path d="M380 318 L400 254"/><path d="M580 318 L510 254"/>
+        </g>
+      </svg>
+      <div class="figcap">图 2-1　系统边界与交互面。虚线为运行环境边界；每条连线的另一端都是潜在相关方，对应表 2-2 的候选方案评估与第 04 章的相关方清单。</div>
+    </div>
+
+    <h3><span class="h3-n">2.3</span>可选解决方案类评估</h3>
+    <p>教材强调，业务分析阶段比较的是<strong>解决方案类</strong>（solution classes），而不是具体型号。围绕“提升校园位移确定性”这一目标，小组讨论收敛出四个类别：一是加密既有校车班次并引入需求响应式人工驾驶小巴；二是部署低速自动驾驶微循环接驳车；三是优化共享两轮与步行路径、增设风雨连廊；四是上述方案的组合，以人工驾驶覆盖过渡期与异常场景。</p>
+    <p>评估维度取自业务视角而非技术视角：覆盖能力、全天候性、全生命周期单位成本、安全与秩序风险、可扩展性、示范与数据价值。评分为小组讨论的示例打分（0—5），权重按校方近期最关心的三项（安全、成本、覆盖）各取 0.25，其余各取 0.125†。评分仅用于说明评估方法可落地，不代表校方结论。</p>
+
+    <div class="tbl-wrap">
+      <table class="data">
+        <caption>表 2-2　可选解决方案类多准则评估（示例评分，0—5）</caption>
+        <colgroup><col style="width:20%"><col style="width:11%"><col style="width:11%"><col style="width:12%"><col style="width:12%"><col style="width:11%"><col style="width:13%"><col style="width:12%"></colgroup>
+        <thead><tr><th>解决方案类</th><th>覆盖能力<br>0.25</th><th>全天候<br>0.125</th><th>单位成本<br>0.25</th><th>安全风险<br>0.25</th><th>可扩展<br>0.125</th><th>数据与示范<br>0.125</th><th>加权总分</th></tr></thead>
+        <tbody>
+          <tr><td>A　加密校车 + 人工需求响应小巴</td><td>3</td><td>4</td><td>3</td><td>4</td><td>2</td><td>1</td><td>3.13</td></tr>
+          <tr><td>B　自动驾驶微循环接驳</td><td>5</td><td>5</td><td>2</td><td>3</td><td>5</td><td>5</td><td>3.63</td></tr>
+          <tr><td>C　两轮优化 + 风雨连廊 + 步行</td><td>2</td><td>2</td><td>5</td><td>4</td><td>3</td><td>2</td><td>3.13</td></tr>
+          <tr><td>D　B + A 组合（过渡期人机并行）</td><td>5</td><td>5</td><td>3</td><td>4</td><td>5</td><td>4</td><td><strong>4.38</strong></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="chart">
+      <div class="chart-h">图 2-2　方案类加权总分对比（示例评分）　·　横轴为加权总分，虚线为 3.5 的取舍阈值</div>
+      <div id="bar"></div>
+      <div class="chart-fallback" id="bar-fallback">图表加载失败，请参阅表 2-2 的加权总分：A 3.13 / B 3.63 / C 3.13 / D 4.38。</div>
+    </div>
+
+    <p>结论是选择<strong>方案类 D</strong>，但把系统的“主体”收敛到 B：以自动驾驶微循环接驳承担常态化运力，人工驾驶小巴作为高峰补充与故障兜底。理由有三：其一，校园是低速、封闭、地图可先行采集的优质场景，自动驾驶的边际成本随班次增加而下降，覆盖能力显著优于固定线路；其二，纯无人方案在雨雪、施工、临时管制等退化场景下缺乏兜底，而组合方案用少量人工运力换取了服务连续性；其三，方案的示范与数据价值可转化为学校后续申报与校企合作的资源，这部分收益虽不进入本项目账本，却真实影响决策。</p>
+    <p>需要写进 BRS 的是这个判断的<strong>理由与约束</strong>，而不是技术选型本身。若评审时校方要求“先小规模试点”，方案类 D 仍然成立，只是项目约束中的进度与预算基线需要重设——这也是后文第 07 章 StRS 的 6.3 采办概念要处理的内容。</p>
+  </section>
+
+  <!-- ===== 03 ConOps 与 OpsCon ===== -->
+  <section class="chapter" id="concept">
+    <div class="ch-head"><div class="ch-num">03</div>
+      <h2>运行概念：组织层的 ConOps 与系统层的 OpsCon<span class="en">CONCEPT OF OPERATIONS &amp; OPERATIONAL CONCEPT</span><span class="keyflag">重点论述</span></h2>
+    </div>
+    <p class="lede">这两个概念在 ANSI/AIAA G-043A 与工程实践中常被混用，但一个回答“组织打算怎么运”，一个回答“这个系统做什么、为什么这样做”。混用的代价是把组织层面的假设错当成了系统需求。</p>
+
+    <h3><span class="h3-n">3.1</span>辨析：层次不同，问题不同</h3>
+    <p>ConOps（Concept of Operations）处在组织层，其作者是运营组织本身，描述的是组织在较长规划期内打算如何用一系列现有系统、待开发系统与未来系统来支撑整体运作。它是业务分析的输入，也是判断“这个项目该不该立项”的依据。OpsCon（Operational Concept）处在系统层，面向一个确定的 SoI，从用户视角说明系统在运行环境中将做什么、为什么这么做，用场景与“what-if”思维把边界、接口、退化与异常都预先展开。</p>
+    <p>二者的关系可以在教材图 4-3 的链条上读出来：企业政策与目标导出 ConOps，ConOps 经差距分析（Gap 分析）导出使命需求，使命需求再按“新系统 / 修改 / 更新 / 无变更”分出 OpsCon。换言之，<strong>ConOps 决定做不做、做什么类别的事；OpsCon 决定这个系统在具体场景里怎么表现。</strong>在本文的语境中，ConOps 是学校“把校园通行为做成确定性服务”这一运营方式的表述，OpsCon 则是 CAMT 在早晚高峰、雨天、夜间、故障下的行为脚本。</p>
+
+    <div class="duo">
+      <div>
+        <h5>CONOPS<b>组织层 · 运营概念</b></h5>
+        <dl>
+          <dt>描述对象</dt><dd>一个或多个系统组成的体系，以及组织如何使用它们</dd>
+          <dt>视角</dt><dd>运营方与决策层；“我们打算怎么经营”</dd>
+          <dt>回答的问题</dt><dd>为什么做、做多大规模、谁负责、如何与既有业务衔接</dd>
+          <dt>典型内容</dt><dd>目标与期望、项目范围、相关方职责、系统如何运行、运行与支持环境、假设与约束</dd>
+          <dt>本文对应</dt><dd>3.2 节；也是 BRS 第 1、3 章的主要来源</dd>
+        </dl>
+      </div>
+      <div>
+        <h5>OPSCON<b>系统层 · 运行概念</b></h5>
+        <dl>
+          <dt>描述对象</dt><dd>一个确定的 SoI 及其运行环境</dd>
+          <dt>视角</dt><dd>用户与采办方；“这个系统会怎么表现”</dd>
+          <dt>回答的问题</dt><dd>系统做什么、为什么这样做、边界与接口在哪、退化时怎么办</dd>
+          <dt>典型内容</dt><dd>产品上下文与外部接口、正常与其他运行场景、退化场景、异常场景、人员需求</dd>
+          <dt>本文对应</dt><dd>3.4、3.5 节；也是 StRS 第 6 章“详细生存周期概念”的主体</dd>
+        </dl>
+      </div>
+    </div>
+
+    <h3><span class="h3-n">3.2</span>ConOps：学校层面的运行构想</h3>
+    <p>学校的运营构想并非“买几台无人车”，而是把校内位移从“自行解决”转为“校内提供的公共服务”。在这一构想下，CAMT 不是孤立的装备采购，而是校园交通组织的一部分：它与既有校车共享站点与调度规则，与共享两轮形成分层——微循环负责中长距离与恶劣天气，两轮负责站点到门的最后几百米；与保卫处的交通管理平台共享事件与违停信息。项目范围因此被限定为“校区内部及跨校区连接段的接驳服务”，不含校外通勤。</p>
+    <p>相关方职责需要在 ConOps 阶段就说清楚，否则会在运营期变成扯皮。校方（分管校领导与规划部门）承担立项、预算与跨部门协调；后勤集团作为运营主体，承担日常调度、保洁与一线处置；保卫处承担交通秩序、事件响应与应急联动；信息化部门承担网络、数据接口与安全合规；车辆与系统供应商承担车辆、算法与备件保障；属地交管与消防作为外部监管，通过备案、验收与演练施加约束。运营模式上，小组建议采用“校方所有 + 服务外包运营”的混合模式†：资产归学校，运营按服务量结算，以避免供应商锁定，同时保留对安全事件的直接指挥权。</p>
+    <p>构想中的关键假设必须显式写出：校园道路可实施低速限行与局部路权隔离†；校园专网可在主要线路提供连续覆盖†；L4 低速车辆在雨雪天气可降级运行或由人工接管†；校方能够在首年安排 2 台人工小巴作为兜底运力†。约束同样明确：不得占用消防通道，不得在宿舍区夜间产生可感知噪声，单车最高运行速度不超过 25 km/h。这些假设与约束在后文会逐条转化为可验证的需求，或转化为项目风险。</p>
+
+    <h3><span class="h3-n">3.3</span>OpsCon 的边界与接口</h3>
+    <p>从系统视角看，CAMT 的上下文可以压缩成四个接口面：与乘客的交互面（预约、候车、上下车、求助）、与道路环境的感知面（行人、骑行者、其他车辆、临时障碍）、与云端的数据面（派单、状态上报、OTA、日志）、与能源及消防的保障面（充电、热失控预警、断电处置）。每个接口面都要回答“输入是什么、输出是什么、失效时谁兜底”。例如感知面的失效不是简单地“减速停车”，而是要在 5 s 内切换到远程接管并同步向后方来车发出警示，否则一次感知误判会演化为追尾。</p>
+
+    <h3><span class="h3-n">3.4</span>运行场景：把“一个切片”展开</h3>
+    <p>教材指出，场景展示了产品生命周期中的一个切片，可用于派生功能、识别接口、设计验证用例，并确定对操作人员的要求。下面六个场景覆盖了正常、退化与异常三类，每个场景末尾标注它派生的需求条目，形成“场景—需求”的可追溯关系。</p>
+
+    <div class="scenes">
+      <div class="scene">
+        <div class="sid">SC-1 / 正常 · 高峰潮汐</div>
+        <h5>早高峰，宿舍区到教学区</h5>
+        <p>07:30—08:20，三个宿舍组团同时涌向教学区。调度平台按预约与实时候车人数合并订单，在主干站点连发两车，支线站点以“接驳换乘”方式把人送到主干线。站牌显示下一班到达时间与满载状态，满载时提示乘客等待下一班或步行替代路径。</p>
+        <div class="deriv">派生：StRS-UR-03 / 04 / 07 · BR-02</div>
+      </div>
+      <div class="scene">
+        <div class="sid">SC-2 / 退化 · 雨雪天气</div>
+        <h5>暴雨，感知受限与需求激增</h5>
+        <p>降雨导致路面反光、行人撑伞遮挡，感知置信度下降。系统自动降速至 12 km/h†、增大跟驰距离，并在积水点前绕行；同时因步行与骑行需求转移到接驳，运力缺口扩大，调度将人工小巴调入主干线补位。</p>
+        <div class="deriv">派生：StRS-UR-01 / 02 / 08 · BR-03</div>
+      </div>
+      <div class="scene">
+        <div class="sid">SC-3 / 正常 · 夜间低峰</div>
+        <h5>23:30 后，预约制按需服务</h5>
+        <p>图书馆闭馆后，零星乘客在站点扫码预约。系统合并同向订单，若 15 min 内无新增需求则单车出发；车辆在宿舍区限速 15 km/h†，车外提示音降至最低，到站以车内提示与手机推送为主，避免扰民。</p>
+        <div class="deriv">派生：StRS-UR-01 / 13 · BR-03</div>
+      </div>
+      <div class="scene">
+        <div class="sid">SC-4 / 异常 · 能量不足</div>
+        <h5>电量低于阈值，返场与替换</h5>
+        <p>车辆在载客途中电量降至 20%†，系统不再接新单，完成当前行程后返场充电，并由调度派出替换车辆接续后续订单；若在跨校区段电量告急，则就近停靠安全站点并通知乘客换乘。</p>
+        <div class="deriv">派生：StRS-UR-17 · BR-06</div>
+      </div>
+      <div class="scene">
+        <div class="sid">SC-5 / 异常 · 通信降级</div>
+        <h5>专网中断，远程接管不可用</h5>
+        <p>校园专网局部中断，车辆与云端失联超过 5 s†，车辆按“最小风险策略”靠边停车并开启双闪，乘客可通过车内语音联系值班室；恢复通信前不恢复自动驾驶，由现场人员或人工小巴接驳。</p>
+        <div class="deriv">派生：StRS-UR-09 / 10 · BR-04</div>
+      </div>
+      <div class="scene">
+        <div class="sid">SC-6 / 异常 · 道路受阻</div>
+        <h5>施工封路与临时管制</h5>
+        <p>主干道因施工封闭，地图未及时更新。车辆在距障碍 30 m† 处识别并停驶，上报事件；调度在 10 min† 内下发绕行路线，若无法绕行则暂停该线路并在站牌与 App 同步公告，给出步行替代路径与人工小巴临时站点。</p>
+        <div class="deriv">派生：StRS-UR-07 / 12 · BR-01</div>
+      </div>
+    </div>
+
+    <p>这六个场景的价值不在于写得细，而在于它们把“系统要做什么”从抽象功能拉到了可观测行为。譬如 SC-5 让“通信中断”从一个风险条目变成了三条可验证的需求：失联判定时限、最小风险策略的停驶行为、恢复前的禁行规则。评审时若有人问“这个需求为什么存在”，答案可以直接指回场景编号。</p>
+  </section>
+
+  <!-- ===== 04 相关方列表 ===== -->
+  <section class="chapter" id="stakeholders">
+    <div class="ch-head"><div class="ch-num">04</div>
+      <h2>相关方列表与分析矩阵<span class="en">STAKEHOLDER REGISTER</span><span class="keyflag">重点论述</span></h2>
+    </div>
+    <p class="lede">相关方找不全，后端的返工几乎无法避免。本文按教材的三分法（直接相关方、交互/使能系统所有者、施影响或被影响者）建立清单，再用权利—利益与影响力—重要性两张矩阵排序。</p>
+
+    <p>清单的推导起点是表 2-1 的五类交互面，再补入“不直接接触系统、但能一票否决”的角色，例如分管校领导、属地交管、消防与保险。抽象化处理是必要的：全校两万余名师生不可能逐一列入，统一抽象为“在校学生”“教职工”“访客”三类；所有一线操作岗位（远程安全员、现场运维、保洁）抽象为“运营与运维人员”。这样既保证覆盖，又保持清单可用。</p>
+
+    <div class="tbl-wrap">
+      <table class="data">
+        <caption>表 4-1　相关方分析表（依教材表 4-3 矩阵）　态度：+2 支持 / +1 倾向支持 / 0 中立 / −1 抵触</caption>
+        <colgroup><col style="width:7%"><col style="width:22%"><col style="width:33%"><col style="width:7%"><col style="width:8%"><col style="width:8%"><col style="width:15%"></colgroup>
+        <thead><tr><th>编号</th><th>相关方</th><th>利益点（体制与管理 / 资源 / 权利 / 约束 / 其他）</th><th>态度</th><th>影响力</th><th>重要性</th><th>类别</th></tr></thead>
+        <tbody>
+          <tr><td class="id">S-01</td><td>在校学生（含研究生）</td><td>出行时间与成本、夜间与雨天可达性、行李与器材搬运、隐私（车内摄像）</td><td>+2</td><td>中</td><td>高</td><td>直接相关方</td></tr>
+          <tr><td class="id">S-02</td><td>教职工（含实验与后勤人员）</td><td>跨校区通勤时间、准时性、携带设备的安全、停车位与站点位置</td><td>+1</td><td>中</td><td>高</td><td>直接相关方</td></tr>
+          <tr><td class="id">S-03</td><td>访客、家长与校友</td><td>寻路难度、临时通行、无障碍需求、对学校形象的感知</td><td>+2</td><td>弱</td><td>中</td><td>直接相关方</td></tr>
+          <tr><td class="id">S-04</td><td>保卫处 / 校园交通管理</td><td>路权分配与限速、消防通道畅通、事件响应责任、监控与取证</td><td>0</td><td>强</td><td>高</td><td>施影响</td></tr>
+          <tr><td class="id">S-05</td><td>后勤集团 / 校车队</td><td>既有业务被替代、运营人员编制、调度与结算方式、保洁与消杀责任</td><td>−1</td><td>强</td><td>高</td><td>施影响</td></tr>
+          <tr><td class="id">S-06</td><td>学校决策层（分管校领导 / 规划部门）</td><td>预算与投资回报、示范效应与申报资源、跨部门协调、舆情风险</td><td>+1</td><td>强</td><td>高</td><td>施影响</td></tr>
+          <tr><td class="id">S-07</td><td>车辆与自动驾驶方案供应商</td><td>订单规模、验收标准、数据与算法知识产权、备件与升级责任</td><td>+2</td><td>中</td><td>高</td><td>使能系统</td></tr>
+          <tr><td class="id">S-08</td><td>校园配电网 / 充电设施所有者</td><td>用电负荷与增容、充电位占用、消防与接地要求、结算接口</td><td>0</td><td>中</td><td>中</td><td>使能系统</td></tr>
+          <tr><td class="id">S-09</td><td>信息化部门 / 数据中心</td><td>专网覆盖与带宽、数据接口规范、等级保护与个人信息合规</td><td>+1</td><td>强</td><td>高</td><td>使能系统</td></tr>
+          <tr><td class="id">S-10</td><td>属地交管部门</td><td>跨校区段的通行许可、车辆属性认定、事故责任划分</td><td>0</td><td>强</td><td>高</td><td>施约束</td></tr>
+          <tr><td class="id">S-11</td><td>消防与应急救援</td><td>电池热失控处置、充电区防火间距、应急通道与演练</td><td>0</td><td>强</td><td>高</td><td>施约束</td></tr>
+          <tr><td class="id">S-12</td><td>保险公司</td><td>承保范围、事故率与免赔条款、远程接管的责任归属</td><td>−1</td><td>中</td><td>中</td><td>施影响</td></tr>
+          <tr><td class="id">S-13</td><td>运营与运维人员（含远程安全员）</td><td>岗位技能与编制、值守强度、接管权限、职业健康</td><td>+1</td><td>中</td><td>高</td><td>操作人员</td></tr>
+          <tr><td class="id">S-14</td><td>师生舆论 / 学生会与校园媒体</td><td>安全事件知情权、隐私边界、收费合理性、对“无人车抢道”的观感</td><td>0</td><td>中</td><td>中</td><td>被影响</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="matrix" role="img" aria-label="相关方影响力与重要性九宫格矩阵">
+      <div class="mx-corner"></div>
+      <div class="mx-col">重要性 低</div>
+      <div class="mx-col">重要性 中</div>
+      <div class="mx-col">重要性 高</div>
+
+      <div class="mx-row"><span class="k">强</span><span class="lbl">影响力</span></div>
+      <div class="cell empty"><span class="dash">—</span></div>
+      <div class="cell empty"><span class="dash">—</span></div>
+      <div class="cell hot"><span class="cap">重点管理</span>
+        <span class="chip mid">S-04 保卫处</span><span class="chip neg">S-05 后勤集团</span><span class="chip">S-06 决策层</span><span class="chip">S-09 信息化</span><span class="chip mid">S-10 交管</span><span class="chip mid">S-11 消防</span>
+      </div>
+
+      <div class="mx-row"><span class="k">中</span><span class="lbl">影响力</span></div>
+      <div class="cell empty"><span class="dash">—</span></div>
+      <div class="cell cool"><span class="cap">保持告知</span>
+        <span class="chip">S-03 访客</span><span class="chip mid">S-08 配电网</span><span class="chip mid">S-14 舆论</span>
+      </div>
+      <div class="cell hot"><span class="cap">重点管理</span>
+        <span class="chip">S-01 学生</span><span class="chip">S-02 教职工</span><span class="chip">S-07 供应商</span><span class="chip">S-13 运营人员</span>
+      </div>
+
+      <div class="mx-row"><span class="k">弱</span><span class="lbl">影响力</span></div>
+      <div class="cell empty"><span class="dash">—</span></div>
+      <div class="cell cool"><span class="cap">监控 · 保持告知</span>
+        <span class="chip neg">S-12 保险</span>
+      </div>
+      <div class="cell hot"><span class="cap">保持告知（无实例）</span><span class="dash">—</span></div>
+    </div>
+    <div class="figcap">图 4-1　相关方九宫格。蓝框为支持、灰框为中立、锈红框为抵触；每个象限标注对应的管理策略。本项目没有“低重要性”相关方，这本身是一个判断：任何新增角色若落在右侧两列，都应进入评审名单。</div>
+
+    <p class="after-fig">矩阵的价值不在填格子，而在于暴露空缺：右下“低影响 × 高重要”一格为空，提示本项目没有“被动受益但无力发声”的角色——学生与访客都属于会主动表达诉求的群体，这决定了沟通成本主要落在高影响方，而不是在低影响方做动员。</p>
+    </div>
+  </section>
+
+  <!-- ===== 05 相关方需求 ===== -->
+  <section class="chapter" id="needs">
+    <div class="ch-head"><div class="ch-num">05</div>
+      <h2>相关方需求：从“需要”到可验证的“需求”<span class="en">STAKEHOLDER REQUIREMENTS</span><span class="keyflag">重点论述</span></h2>
+    </div>
+    <p class="lede">需要（need）是某一方站在自己立场表达的意图，常常隐含、含糊甚至互相冲突；需求（requirement）是经过多方权衡、定义与分析后的可行描述，必须可验证。</p>
+
+    <p>获取方法上，小组采用了组合策略：对师生用问卷与站点拦截访谈（样本 120 份†），对保卫处、后勤集团、信息化部门用工责访谈，对车辆供应商用技术交流与原型演示，对交管与消防则用文档审查（现行法规与校园交通管理办法）。这对应教材表 4-4 中“问卷 / 访谈 / 原型 / 文档审查”的组合，原因在于不同相关方的领域知识水平差异极大：师生说不清具体技术方案，但能说清“我怕晚上一个人在站台等车”；供应商能给出指标，却不知道校园的作息节律。</p>
+    <p>冲突处理是这一章最容易被跳过、也最能体现工程判断的部分。典型冲突有三对：学生希望“站点越近越好”，保卫处要求“不得占用消防通道与人行专用道”；后勤集团担心“无人车抢了司机岗位”，决策层希望“降低长期运营成本”；供应商倾向“减少人工接管以体现自动化水平”，而安全责任要求“关键场景必须可接管”。处理原则写入下表：所有需求都必须能指回一个业务需求，冲突项以安全与法规为硬约束，其余按成本—收益权衡。</p>
+
+    <div class="group-tag">A · 服务可用性与覆盖</div>
+    <div class="tbl-wrap">
+      <table class="data">
+        <caption>表 5-1　相关方用户需求（StRS 第 5 章主体）</caption>
+        <colgroup><col style="width:13.5%"><col style="width:37.5%"><col style="width:11.5%"><col style="width:6.5%"><col style="width:31%"></colgroup>
+        <thead><tr><th>编号</th><th>需求陈述（应 / shall）</th><th>来源</th><th>优先级</th><th>验证准则（MoE）</th></tr></thead>
+        <tbody>
+          <tr><td class="id">StRS-UR-01</td><td>系统应在 06:30—23:30 提供常态服务，并在 23:30—06:30 提供预约制服务，预约响应时间不大于 15 min†。</td><td>S-01 / S-02 / S-04</td><td>高</td><td>连续 30 天运行日志：服务可用率 ≥ 99%，夜间预约 P95 响应 ≤ 15 min</td></tr>
+          <tr><td class="id">StRS-UR-02</td><td>系统站点应覆盖主环路、跨校区通道与图书馆—宿舍组团，站间距不大于 400 m†，任一教学与宿舍建筑出入口至最近站点的步行时间不超过 5 min†。</td><td>S-01 / S-03 / S-06</td><td>高</td><td>站点覆盖图评审 + 30 个采样点实测步行时间</td></tr>
+          <tr><td class="id">StRS-UR-03</td><td>系统应在高峰时段（07:30—08:30、11:30—13:00、17:00—18:30）将主干线发车间隔控制在 5 min† 以内，平峰不大于 15 min†。</td><td>S-01 / S-02</td><td>高</td><td>调度日志统计候车时长 P95：高峰 ≤ 6 min，平峰 ≤ 16 min</td></tr>
+          <tr><td class="id">StRS-UR-04</td><td>系统应支持移动端与站牌二维码预约，订单确认响应不大于 3 s，15 min 内到站预测误差不大于 2 min†。</td><td>S-01 / S-03</td><td>中</td><td>接口压测报告 + 500 次到站预测比对，误差分布 P90 ≤ 2 min</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="group-tag">B · 出行体验与无障碍</div>
+    <div class="tbl-wrap">
+      <table class="data">
+        <caption>表 5-2　体验与无障碍类需求</caption>
+        <colgroup><col style="width:13.5%"><col style="width:37.5%"><col style="width:11.5%"><col style="width:6.5%"><col style="width:31%"></colgroup>
+        <thead><tr><th>编号</th><th>需求陈述（应 / shall）</th><th>来源</th><th>优先级</th><th>验证准则（MoE）</th></tr></thead>
+        <tbody>
+          <tr><td class="id">StRS-UR-05</td><td>每辆车应至少容纳 1 名轮椅乘客，配备低地板或坡板与固定装置，承载能力不小于 250 kg†，并满足国家无障碍设施设计的相关规定。</td><td>S-01 / S-03</td><td>高</td><td>样车实测：轮椅上下车时间 ≤ 90 s，固定装置静载试验合格</td></tr>
+          <tr><td class="id">StRS-UR-06</td><td>单车额定载客应不少于 6 人（含 2 个站立位†），40 km/h 工况下车内噪声不大于 70 dB(A)†，最高运行速度不超过 25 km/h。</td><td>S-01 / S-02 / S-04</td><td>中</td><td>型式试验报告 + 车内噪声实测 3 点均值</td></tr>
+          <tr><td class="id">StRS-UR-07</td><td>站牌与 App 应提供车辆位置、预计到站与满载状态，刷新周期不大于 5 s；服务异常时应给出可执行的替代方案（步行路径、人工小巴临时站点）。</td><td>S-01 / S-03 / S-14</td><td>中</td><td>交互走查 20 场景 + 端到端时延测试</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="group-tag">C · 安全与应急</div>
+    <div class="tbl-wrap">
+      <table class="data">
+        <caption>表 5-3　安全与应急类需求</caption>
+        <colgroup><col style="width:13.5%"><col style="width:37.5%"><col style="width:11.5%"><col style="width:6.5%"><col style="width:31%"></colgroup>
+        <thead><tr><th>编号</th><th>需求陈述（应 / shall）</th><th>来源</th><th>优先级</th><th>验证准则（MoE）</th></tr></thead>
+        <tbody>
+          <tr><td class="id">StRS-UR-08</td><td>系统应在检测到行人或骑行者进入行驶路径时，于不大于 1.5 m† 的距离内完成制动，紧急制动减速度不小于 0.5 g†；25 km/h 以下不得与弱势交通参与者发生碰撞。</td><td>S-04 / S-06 / S-10</td><td>高</td><td>封闭场地靶车试验 + 不少于 5000 km† 的开放道路零碰撞记录</td></tr>
+          <tr><td class="id">StRS-UR-09</td><td>任何自动驾驶功能故障应在 5 s† 内触发告警并由远程安全员接管，接管链路应独立于业务数据网络。</td><td>S-04 / S-13</td><td>高</td><td>故障注入测试 20 类，接管成功率 100%，平均接管时延 ≤ 5 s</td></tr>
+          <tr><td class="id">StRS-UR-10</td><td>车内应设紧急停车按钮与双向语音；事件发生后 60 s† 内通知保卫处与值班经理，现场处置人员应在 10 min† 内到达。</td><td>S-04 / S-11 / S-13</td><td>高</td><td>应急演练 3 次，通知与到场时间记录</td></tr>
+          <tr><td class="id">StRS-UR-11</td><td>动力电池应满足 GB 38031 的安全要求；充电区应独立设置，配置热失控预警与消防设施，并与建筑保持规定防火间距。</td><td>S-11 / S-08</td><td>高</td><td>电池包型式试验报告 + 消防验收意见</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="group-tag">D · 秩序、环境与数据</div>
+    <div class="tbl-wrap">
+      <table class="data">
+        <caption>表 5-4　秩序、环境与数据类需求</caption>
+        <colgroup><col style="width:13.5%"><col style="width:37.5%"><col style="width:11.5%"><col style="width:6.5%"><col style="width:31%"></colgroup>
+        <thead><tr><th>编号</th><th>需求陈述（应 / shall）</th><th>来源</th><th>优先级</th><th>验证准则（MoE）</th></tr></thead>
+        <tbody>
+          <tr><td class="id">StRS-UR-12</td><td>系统运行不得占用消防通道与人行专用道；车辆越界停放应自动告警并上报；站点周边 5 m 内不得形成两轮车聚集。</td><td>S-04 / S-06</td><td>高</td><td>连续 30 天违停告警统计 + 现场抽查 10 次</td></tr>
+          <tr><td class="id">StRS-UR-13</td><td>22:00—06:00 通过宿舍区时车速不超过 15 km/h†，车外噪声不大于 55 dB(A)†；系统应零尾气排放。</td><td>S-01 / S-14</td><td>中</td><td>夜间噪声实测（宿舍窗外 1 m，3 晚各 3 点）</td></tr>
+          <tr><td class="id">StRS-UR-14</td><td>行程、位置与支付数据应分级管理；个人可识别信息最小化采集，车内影像仅用于安全事件，留存不超过 30 天†；处理活动应符合《个人信息保护法》《数据安全法》。</td><td>S-01 / S-09 / S-14</td><td>高</td><td>个人信息保护影响评估报告 + 日志留存策略核查</td></tr>
+          <tr><td class="id">StRS-UR-15</td><td>系统应向校方开放脱敏后的 OD 与运力数据，接口可用率不低于 99%，数据延迟不超过 15 min†。</td><td>S-06 / S-09</td><td>中</td><td>接口可用率月报 + 抽样比对</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="group-tag">E · 运维与可维护性</div>
+    <div class="tbl-wrap">
+      <table class="data">
+        <caption>表 5-5　运维与可维护性需求</caption>
+        <colgroup><col style="width:13.5%"><col style="width:37.5%"><col style="width:11.5%"><col style="width:6.5%"><col style="width:31%"></colgroup>
+        <thead><tr><th>编号</th><th>需求陈述（应 / shall）</th><th>来源</th><th>优先级</th><th>验证准则（MoE）</th></tr></thead>
+        <tbody>
+          <tr><td class="id">StRS-UR-16</td><td>单车平均无故障时间（MTBF）应不小于 500 h†，故障后 2 h† 内恢复或替换；本地备件库存应覆盖 90%† 的常见故障类型。</td><td>S-05 / S-07 / S-13</td><td>中</td><td>12 个月运行台账统计 + 备件清单审查</td></tr>
+          <tr><td class="id">StRS-UR-17</td><td>单车续航应不小于 120 km†；日运营里程不超过 100 km†；0—90% 充电时间不超过 2 h†，充电桩与车辆配比不低于 1:3。</td><td>S-08 / S-07</td><td>高</td><td>续航实测（满载、开启空调）+ 充电曲线记录</td></tr>
+          <tr><td class="id">StRS-UR-18</td><td>OTA 升级应在停运窗口执行，失败时自动回滚，升级期间不得影响在途车辆与线上订单。</td><td>S-07 / S-09 / S-13</td><td>中</td><td>升级演练：回滚成功率 100%，在途车辆零中断</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p>五组共 18 条需求，全部标注了来源相关方与可测量的验证准则。优先级“高”的 11 条（UR-01、02、03、05、08、09、10、11、12、14、17）集中在服务连续性与安全，构成后续 SyRS 的必做集合；标“中”的条目可在预算受限时降级或分期实现，但须在评审记录中留痕。</p>
+  </section>
+
+  <!-- ===== 06 BRS ===== -->
+  <section class="chapter spec" id="brs">
+    <div class="ch-head"><div class="ch-num">06</div>
+      <h2>业务需求规格说明（BRS）<span class="en">BUSINESS REQUIREMENTS SPECIFICATION · 依表4-1 框架</span></h2>
+    </div>
+    <div class="docband"><b>BRS-CAMT-v1.0</b><i>　编制依据：</i>ISO/IEC/IEEE 29148:2018 表4-1　<i>编制责任：</i>业务管理方（校方项目办）</div>
+    <p class="lede">BRS 处在业务管理层，回答“为什么要启动这个项目、项目将实现什么、用什么指标衡量成功”，不描述技术方案。以下八章按表 4-1 的规定项目逐条填写。</p>
+
+    <h3 class="sp"><span class="sn">1.1</span>业务目的</h3>
+    <p>校内出行服务缺少确定性：高峰挤不上、平峰空驶、夜间与雨天几乎无供给，两轮车的无序停放与室内充电又带来消防隐患。学校需要在控制校园路权与运营成本的前提下，把短途位移变成一项可预期、可管理的公共服务，并为绿色出行比例与无障碍通行覆盖率的目标提供支撑。CAMT 即为实现这一业务目标的提案系统。</p>
+
+    <h3 class="sp"><span class="sn">1.2</span>业务范围</h3>
+    <p>a）<strong>业务域</strong>：校园内部及跨校区连接段的短途客运服务，服务对象为在校师生、访客与校内工作人员。<br>
+    b）<strong>业务活动范围</strong>：按直接业务活动界定，涵盖预约与调度、运送与上下客、充电与整备、异常处置、数据统计与结算；支撑性活动包括保洁、备件供应与保险理赔协同。<br>
+    c）<strong>系统范围</strong>：提案系统包含车辆、站点交互终端、调度平台、专用充电位；<strong>不包含</strong>校外通勤、市政公交运营、共享两轮管理、校内货运与物流配送。</p>
+
+    <h3 class="sp"><span class="sn">1.3</span>业务概况</h3>
+    <p>业务内部可划分为三个分组：<strong>运营调度组</strong>（订单、派单、运力配置）、<strong>现场保障组</strong>（整备、充电、故障处置、保洁）与<strong>安全管理组</strong>（监控、接管、事件上报）。外部实体包括保卫处、信息化部门、配电网与充电运营商、车辆与算法供应商、属地交管与消防。图 2-1 已给出系统边界与交互面，这里不再重复；业务上的关键关系是：调度指令来自运营方，路权与秩序约束来自保卫处，数据接口与合规约束来自信息化部门，能量与消防约束来自配电网与消防。</p>
+
+    <h3 class="sp"><span class="sn">1.4</span>定义</h3>
+    <p><strong>CAMT</strong>：校园自动驾驶微循环接驳系统，本文的提案系统。<br>
+    <strong>SoI</strong>：所关心的系统（System of Interest）。<br>
+    <strong>ConOps / OpsCon</strong>：组织层运营概念 / 系统层运行概念，辨析见第 03 章。<br>
+    <strong>MoE</strong>：有效性度量（Measure of Effectiveness），用于验证需求是否被满足。<br>
+    <strong>OD</strong>：起讫点（Origin-Destination），描述出行流向。<br>
+    其余缩写见 8.1。</p>
+
+    <h3 class="sp"><span class="sn">1.5</span>主要相关方</h3>
+    <p>共识别 14 类相关方，分为三组：<strong>直接相关方</strong>为在校学生（S-01）、教职工（S-02）、访客与家长（S-03）；<strong>交互与使能系统所有者</strong>为供应商（S-07）、配电网与充电设施（S-08）、信息化部门（S-09）；<strong>施影响或被影响者</strong>为保卫处（S-04）、后勤集团（S-05）、决策层（S-06）、属地交管（S-10）、消防（S-11）、保险公司（S-12）、运营与运维人员（S-13）、师生舆论（S-14）。完整的利益点、态度与影响力分析见第 04 章表 4-1。</p>
+
+    <h3 class="sp"><span class="sn">2</span>参考文献</h3>
+    <p>[1] ISO/IEC/IEEE 29148:2018，Systems and software engineering — Life cycle processes — Requirements engineering.<br>
+    [2] ISO/IEC/IEEE 15288:2023，System life cycle processes.<br>
+    [3] INCOSE. Systems Engineering Handbook（第 5 版）.<br>
+    [4] 郭宝柱. 系统工程——基于国际标准过程的研究与实践. 第 4 章 概念定义.<br>
+    [5] ANSI/AIAA G-043A-2012，Guide for the Preparation of Operational Concept Documents.<br>
+    [6] IIBA. A Guide to the Business Analysis Body of Knowledge（BABOK Guide，第 3 版）.<br>
+    [7] GB 38031—2020，电动汽车用动力蓄电池安全要求.<br>
+    [8] 《中华人民共和国个人信息保护法》《中华人民共和国数据安全法》（2021）.</p>
+
+    <h3 class="sp"><span class="sn">3.1</span>业务环境</h3>
+    <p><strong>内部环境</strong>：校园作息决定客流呈明显潮汐；路权由学校统一分配，可实施低速限行；既有校车与共享两轮构成替代竞争；预算受学校年度专项限制；信息化基础较好但专网在部分路段覆盖不足†；消防与后勤对新增设施的进场有明确审批流程。<br>
+    <strong>外部环境</strong>：低速自动驾驶的示范应用政策在多地已开放，但跨校区段涉及市政道路，需要属地交管许可；供应商技术水平与交付能力差异较大；保险市场对无人驾驶的责任划分尚无统一条款；师生对“无人车”的安全感知会直接影响接受度。这些外部因素会通过法规、成本与舆情三条路径作用于本项目。</p>
+
+    <h3 class="sp"><span class="sn">3.2</span>使命、目的与目标</h3>
+    <p><strong>使命</strong>：在校区内提供可预期、全天候、无障碍的低速接驳服务。<br>
+    <strong>目的</strong>：降低出行时间的不确定性；把两轮出行中的一部分转移到安全可控的公共服务上，减少无序停放与室内充电隐患；形成可持续积累的出行数据资产，支撑后续交通组织优化。<br>
+    <strong>目标（SMART）</strong>：G1 高峰候车时长 P95 ≤ 6 min†；G2 教学与宿舍建筑 5 min† 步行覆盖比例 ≥ 90%†；G3 服务可用率 ≥ 99%；G4 18 个月† 内完成两期部署并进入常态运营；G5 单位人次运营成本较“加密校车”方案低 15%†。</p>
+
+    <div class="tbl-wrap">
+      <table class="data">
+        <caption>表 6-1　业务需求条目（BR）</caption>
+        <colgroup><col style="width:11%"><col style="width:47%"><col style="width:30%"><col style="width:12%"></colgroup>
+        <thead><tr><th>编号</th><th>业务需求陈述</th><th>衡量指标</th><th>优先级</th></tr></thead>
+        <tbody>
+          <tr><td class="id">BR-01</td><td>组织应提供覆盖全校区主要出行组团的常态接驳服务，并在夜间保留可预约的最低服务能力。</td><td>G2 覆盖率；夜间预约响应 P95 ≤ 15 min†</td><td>高</td></tr>
+          <tr><td class="id">BR-02</td><td>组织应在潮汐高峰提供与客流匹配的运力，使候车时长稳定在可接受区间。</td><td>G1 高峰候车 P95 ≤ 6 min†</td><td>高</td></tr>
+          <tr><td class="id">BR-03</td><td>组织应保证雨雪、夜间等不利条件下的服务连续性，不因天气或照明条件整体停运。</td><td>恶劣天气可用率 ≥ 95%†</td><td>高</td></tr>
+          <tr><td class="id">BR-04</td><td>组织应通过服务替代减少两轮车无序停放与室内充电，提升校园交通秩序与消防安全水平。</td><td>重点区域违停事件下降 ≥ 30%†；零室内充电事故</td><td>高</td></tr>
+          <tr><td class="id">BR-05</td><td>组织应形成可复用的低速自动驾驶运营经验与数据资产，支撑后续示范与申报。</td><td>OD 数据完整性 ≥ 95%†；年度示范报告 1 份</td><td>中</td></tr>
+          <tr><td class="id">BR-06</td><td>组织应将全生命周期成本控制在专项预算内，并使单位人次成本逐年下降。</td><td>G5；首年运营成本 ≤ 预算上限†</td><td>高</td></tr>
+          <tr><td class="id">BR-07</td><td>组织应满足无障碍、消防、道路交通安全等强制性法规与标准要求。</td><td>验收一次通过率 100%</td><td>高</td></tr>
+          <tr><td class="id">BR-08</td><td>组织应确保出行与影像数据的采集、留存与共享符合个人信息保护与数据安全要求。</td><td>合规评估无高风险项；审计零重大不符合</td><td>高</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sp"><span class="sn">3.3</span>业务模型</h3>
+    <p>业务模型的核心是“谁出资、谁运营、谁担责”。小组建议采用资产与运营分离的模式：车辆与平台资产归学校，运营按服务量结算给专业运营方，安全管理责任仍由学校承担并通过合同条款传导。收入侧以校方补贴为主、象征性票价为辅†，避免因定价争议影响使用率；成本侧由车辆折旧、能源、人力、保险与维护五项构成，其中人力成本随自动化程度下降而下降，是方案经济性的主要来源。</p>
+
+    <div class="tbl-wrap">
+      <table class="data">
+        <caption>表 6-2　业务模型要素</caption>
+        <colgroup><col style="width:18%"><col style="width:52%"><col style="width:30%"></colgroup>
+        <thead><tr><th>要素</th><th>设计</th><th>影响的需求</th></tr></thead>
+        <tbody>
+          <tr><td>付费方</td><td>学校专项预算为主，乘客零票价或低票价†</td><td>BR-06</td></tr>
+          <tr><td>运营主体</td><td>专业运营方驻场，学校设项目办监管</td><td>BR-01 / BR-04</td></tr>
+          <tr><td>结算方式</td><td>按有效服务里程与准点率结算，设安全否决项</td><td>BR-02 / BR-07</td></tr>
+          <tr><td>与既有校车关系</td><td>共享站点，先并行后替代部分班次，司机转岗培训†</td><td>BR-02 / S-05 利益补偿</td></tr>
+          <tr><td>数据权属</td><td>业务数据归学校，算法与模型归供应商，脱敏后共享</td><td>BR-05 / BR-08</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sp"><span class="sn">3.4</span>信息环境</h3>
+    <p>本项目不是孤立的信息系统，需嵌入学校既有的信息化架构：其一，<strong>项目组合</strong>层面与“智慧校园交通专项”“充电桩建设”“校园网络升级”三个在建项目共享目标，须统一优先级与接口标准；其二，<strong>长期系统计划</strong>已确定数据中台与统一身份认证为基础设施，本系统须复用统一认证，不得另建账号体系；其三，<strong>数据库配置</strong>上，OD 与运力数据入校方数据仓并做脱敏，车内影像本地留存不超过 30 天†，跨系统调用须经审批与审计。</p>
+
+    <h3 class="sp"><span class="sn">4.1</span>业务过程</h3>
+    <p>业务过程按“需求产生—运力配置—运送—异常处置—结算复盘”五段分解，每段有唯一编号与责任组，便于后续映射到系统过程（见 StRS 4.1）。分解采用分层结构：顶层为服务交付主流程，第二层为各段的子活动，第三层为异常分支。</p>
+    <div class="flow">
+      <div><span class="fn">BP-1</span><b>需求产生</b>预约、站台候车、临时招手与调度补单</div>
+      <div><span class="fn">BP-2</span><b>运力配置</b>按潮汐与满载率连发、串点或调人工小巴</div>
+      <div><span class="fn">BP-3</span><b>运送</b>上下客、行驶、到站提示与异常让行</div>
+      <div><span class="fn">BP-4</span><b>异常处置</b>接管、停驶、绕行、替换与事件上报</div>
+      <div><span class="fn">BP-5</span><b>结算复盘</b>服务量核算、投诉处理、数据归档</div>
+    </div>
+
+    <h3 class="sp"><span class="sn">4.2</span>业务运营策略与规则</h3>
+    <p>规则必须唯一命名并在流程描述中被引用，否则运营期无法追责。R1 <strong>潮汐连发</strong>：高峰时段同线路连续发车，满载即走，不等间隔。R2 <strong>平峰合并</strong>：平峰按预约合并同向订单，最长等待不超过 15 min†。R3 <strong>天气降级</strong>：降雨、积雪或能见度不足时降速并调入人工运力。R4 <strong>夜间静音</strong>：22:00 后通过宿舍区限速 15 km/h†、关闭车外提示音。R5 <strong>故障退出</strong>：任一安全相关故障即退出运营，2 h† 内完成替换。R6 <strong>安全优先</strong>：安全 > 服务连续性 > 成本，三者冲突时按此顺序决策。</p>
+
+    <h3 class="sp"><span class="sn">4.3</span>业务运行约束</h3>
+    <p>路权约束：不得占用消防通道与人行专用道，不得在宿舍区设置候车排队区；速度约束：校内不超过 25 km/h，宿舍区夜间不超过 15 km/h†；能源约束：单站配电容量需满足同时 2 车快充†，不得与实验楼大负荷设备争抢容量；法规约束：跨校区段须取得属地交管许可，充电设施须通过消防验收；资源约束：首年投资不超过专项预算上限†，常设编制不增加†，以现有后勤人员转岗为主。</p>
+
+    <h3 class="sp"><span class="sn">4.4</span>业务运行质量</h3>
+    <p>质量水平决定了“服务好不好”的判定口径，需在合同中量化。可用性以月度统计，准点率以到站偏差 ≤ 2 min† 计为达标；投诉响应时限 24 h†，重大安全事件 10 min† 内上报；数据质量要求 OD 完整率 ≥ 95%†、延迟 ≤ 15 min†。质量指标的优先级高于成本指标——当预算与可用性冲突时，优先削减非核心线路的班次，而不是降低安全配置。</p>
+
+    <h3 class="sp"><span class="sn">4.5</span>业务结构</h3>
+    <p>业务结构描述组织与角色，不描述技术。学校设项目办（业主代表）负责立项、预算与验收；运营方设调度、现场保障与安全管理三个组；供应商提供车辆、算法与备件，并对安全相关故障承担响应时限责任；保卫处与信息化部门以联席机制参与事件处置与数据接口管理。</p>
+
+    <div class="tbl-wrap">
+      <table class="data">
+        <caption>表 6-3　关键角色职责（R 负责 / A 批准 / C 咨询 / I 知会）</caption>
+        <colgroup><col style="width:26%"><col style="width:11%"><col style="width:11%"><col style="width:11%"><col style="width:11%"><col style="width:15%"><col style="width:15%"></colgroup>
+        <thead><tr><th>业务活动</th><th>项目办</th><th>运营方</th><th>供应商</th><th>保卫处</th><th>信息化部门</th><th>消防/交管</th></tr></thead>
+        <tbody>
+          <tr><td>线路与站点确定</td><td>A</td><td>R</td><td>C</td><td>C</td><td>I</td><td>C</td></tr>
+          <tr><td>日常调度</td><td>I</td><td>R</td><td>C</td><td>I</td><td>I</td><td>—</td></tr>
+          <tr><td>安全事件处置</td><td>A</td><td>R</td><td>C</td><td>R</td><td>I</td><td>C</td></tr>
+          <tr><td>数据接口与合规</td><td>A</td><td>C</td><td>C</td><td>I</td><td>R</td><td>I</td></tr>
+          <tr><td>充电与消防设施验收</td><td>A</td><td>C</td><td>C</td><td>I</td><td>—</td><td>R</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sp"><span class="sn">5.1</span>提案系统初步运行概念</h3>
+    <p>初步运行概念用高层级方式表达系统的运行特性，不指定设计细节，应包含以下五项：<strong>a）运营政策与约束</strong>——安全优先、免费或低票价†、限速 25 km/h；<strong>b）提案系统描述</strong>——6 台 L4 低速接驳车、18 个站点†、云端调度与专用充电位；<strong>c）系统运行模式</strong>——常态班次、预约按需、天气降级、人工兜底四种；<strong>d）用户类型</strong>——学生、教职工、访客、行动不便者、运维与安全员；<strong>e）支持环境</strong>——校园专网、数据中台、驻场运维与备件库。</p>
+
+    <h3 class="sp"><span class="sn">5.2</span>初步运行场景</h3>
+    <p>初步场景只需说明“系统在重要使用环境中如何与用户交互”，详细展开见第 03 章 3.4 节与 StRS 6.2。下表给出对应关系，避免两处重复叙述。</p>
+    <div class="tbl-wrap">
+      <table class="data">
+        <caption>表 6-4　初步运行场景索引</caption>
+        <colgroup><col style="width:12%"><col style="width:24%"><col style="width:22%"><col style="width:42%"></colgroup>
+        <thead><tr><th>编号</th><th>场景</th><th>类型</th><th>主要派生需求</th></tr></thead>
+        <tbody>
+          <tr><td class="id">SC-1</td><td>早高峰潮汐</td><td>正常</td><td>StRS-UR-03、04、07</td></tr>
+          <tr><td class="id">SC-2</td><td>暴雨感知受限</td><td>退化</td><td>StRS-UR-01、02、08</td></tr>
+          <tr><td class="id">SC-3</td><td>夜间预约</td><td>正常</td><td>StRS-UR-01、13</td></tr>
+          <tr><td class="id">SC-4</td><td>电量不足返场</td><td>异常</td><td>StRS-UR-17</td></tr>
+          <tr><td class="id">SC-5</td><td>通信中断</td><td>异常</td><td>StRS-UR-09、10</td></tr>
+          <tr><td class="id">SC-6</td><td>施工封路</td><td>异常</td><td>StRS-UR-07、12</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3 class="sp"><span class="sn">6</span>其他初步生存周期概念</h3>
+    <p><strong>采办</strong>：采用“试点 + 扩容”的两期模式，一期以框架协议采购 2 台车与 1 条线路的服务，二期按一期 MoE 达成情况扩容至 6 台；合同须包含可用性条款、数据权属与安全事件响应时限。<strong>部署</strong>：先完成地图采集、站点改造与充电位建设，再进入 3 个月† 试运行，试运行期间保留人工小巴兜底。<strong>支持</strong>：驻场运维 2 人†、7×24 远程监控、本地备件库、季度 OTA 窗口。<strong>弃置</strong>：动力电池按梯次利用与回收渠道处置，车辆拆解由供应商负责，个人数据在退役时彻底销毁，站点设施恢复原状或移交后续项目。</p>
+
+    <h3 class="sp"><span class="sn">7</span>项目约束</h3>
+    <p>成本：首年投资与运营支出合计不超过专项预算†，二期投资以一期评估结论为前提。进度：18 个月† 内完成两期部署，跨校区段许可办理为关键路径。法规：须完成交管备案、消防验收与个人信息保护影响评估。组织：不得新增常设编制†，以现有人员转岗与外包相结合。技术：不得形成单一供应商锁定，关键接口与数据格式须归学校所有。</p>
+
+    <h3 class="sp"><span class="sn">8.1</span>缩写与缩略语</h3>
+    <p>CAMT 校园自动驾驶微循环接驳系统；BRS 业务需求规格说明；StRS 相关方需求规格说明；SyRS 系统需求规格说明；SoI 所关心的系统；ConOps 运营概念；OpsCon 运行概念；OD 起讫点；L4 自动驾驶等级 4；MoE 有效性度量；MTBF 平均无故障时间；OTA 空中下载升级；RTM 需求追溯矩阵；PPIA 个人信息保护影响评估。</p>
+  </section>
+
+  <!-- ===== 07 StRS ===== -->
+  <section class="chapter spec" id="strs">
+    <div class="ch-head"><div class="ch-num">07</div>
+      <h2>相关方需求规格说明（StRS）<span class="en">STAKEHOLDER REQUIREMENTS SPECIFICATION · 依表4-5 框架</span></h2>
+    </div>
+    <div class="docband"><b>StRS-CAMT-v1.0</b><i>　编制依据：</i>ISO/IEC/IEEE 29148:2018 表4-5　<i>编制责任：</i>相关方共同确认</div>
+    <p class="lede">BRS 说组织要什么，StRS 说相关方在使用系统的场景中要什么。它把业务语言翻译成用户视角的可验证需求，并把采办、部署、支持、弃置这些容易被忽略的生命周期概念写进同一份文件。</p>
+
+    <h3 class="sp"><span class="sn">1.1</span>相关方目的</h3>
+    <p>开发 CAMT 的目的，是让 14 类相关方在各自的使用场景中获得明确收益：学生与教职工获得可预期的通勤时间与夜间、雨天的可用服务；行动不便者获得不依赖他人协助的通行能力；保卫处获得可控的路权与可追溯的事件记录；学校获得可量化的绿色出行改善与示范数据。对后勤集团这类既得利益受影响的一方，目的表述中必须包含“转岗与业务平滑过渡”，否则 StRS 从一开始就缺少合法性。</p>
+
+    <h3 class="sp"><span class="sn">1.2</span>相关方范围</h3>
+    <p>范围按两个维度界定。系统维度：覆盖车辆、站点、调度平台与充电位，不覆盖校外道路与市政公交。生命周期维度：覆盖概念、开发、运营、支持与退役五个阶段的相关方需要，其中运营与支持阶段是本文的重点——多数项目在概念阶段只写“用户怎么用”，把维护、备件、接管、退役交给后期，正是返工的来源。</p>
+
+    <h3 class="sp"><span class="sn">1.3</span>概况</h3>
+    <p>CAMT 是一个低速、限定区域、按需调度的运输服务系统，由 6 台 L4 级接驳车、18 个站点†、云端调度平台与专用充电位构成，运行于约 2.4 km²† 的校园环境。系统的关键特性包括：按需派单与潮汐连发、到站预测、远程接管、最小风险策略停驶、无障碍上下车与脱敏数据回传。系统边界与外部接口见图 2-1。</p>
+
+    <h3 class="sp"><span class="sn">1.4</span>定义</h3>
+    <p>沿用 BRS 1.4 的定义，并补充：<strong>最小风险策略</strong>（Minimal Risk Condition）指系统在无法继续自动驾驶时，将车辆安全停靠至不妨碍通行的位置并进入可控状态的策略；<strong>远程接管</strong>指远程安全员通过独立链路对车辆进行控制或下达指令。</p>
+
+    <h3 class="sp"><span class="sn">1.5</span>相关方</h3>
+    <p>相关方清单与利益点分析见表 4-1（第 04 章）。为便于评审，这里给出分组：直接受益方 S-01/S-02/S-03；管理约束方 S-04/S-10/S-11；资源与资产方 S-05/S-06/S-08；技术与数据方 S-07/S-09；风险与声誉方 S-12/S-14；操作使用者 S-13。</p>
+
+    <h3 class="sp"><span class="sn">2</span>参考</h3>
+    <p>同 BRS 第 2 章；另参考 ISO 9241-210（人机交互可用性）、ISO/IEC 25030（质量需求）、GB 38031—2020 及校园交通管理办法。</p>
+
+    <h3 class="sp"><span class="sn">3.1</span>业务环境</h3>
+    <p>业务环境沿用 BRS 3.1 的结论。对 StRS 而言，需要额外强调三点：校园作息的潮汐特征决定了运力必须可动态调配；校园路权由学校单方分配，使站点选址具备可行性但受消防与人行通道约束；师生对“无人驾驶”的接受度是渐进形成的，首期运营需要可见的安全冗余（如远程接管与人工兜底）来建立信任。</p>
+
+    <h3 class="sp"><span class="sn">3.2</span>使命、目的与目标</h3>
+    <p>使命与目标同 BRS 3.2。差别在于表述主体：BRS 说“组织应提供覆盖”，StRS 说“乘客在任一教学楼下应在 5 min† 内走到站点并看见下一班何时到达”。目标值一致，但验证视角从业务指标切换为用户可感知的体验。</p>
+
+    <h3 class="sp"><span class="sn">3.3</span>业务模型</h3>
+    <p>业务模型对相关方需求的影响主要体现在两点：其一，免费或低票价†意味着不能依赖票务系统做用户识别，OD 统计须采用匿名化方式（如站点计数与匿名设备标识），这直接约束了数据需求的设计；其二，按服务量结算意味着运营方有压缩班次的动机，因此必须把“准点率与可用性”写成带否决权的合同条款，否则 BR-02 会在运营期被侵蚀。</p>
+
+    <h3 class="sp"><span class="sn">3.4</span>信息环境</h3>
+    <p>系统须复用学校统一身份认证，不新建账号体系；与数据中台通过标准接口交换脱敏 OD 与运力数据；与保卫处视频平台的事件片段共享须逐次授权并留痕；充电设施计量数据接入后勤能源管理平台。信息环境决定了 4.1 中“数据归档”过程的接口边界。</p>
+
+    <h3 class="sp"><span class="sn">4.1</span>系统过程</h3>
+    <p>系统过程是业务过程在系统内的实现，一一对应便于追溯：SP-1 订单受理与预约（对应 BP-1）、SP-2 派单与运力调度（BP-2）、SP-3 自动驾驶运送与上下客（BP-3）、SP-4 异常处置与远程接管（BP-4）、SP-5 回场充电与整备、SP-6 维护与 OTA 升级、SP-7 数据归档与统计（BP-5）。其中 SP-4 与 SP-6 在原业务流程中没有独立环节，是系统化之后新增的过程，必须在 StRS 中显式定义。</p>
+
+    <h3 class="sp"><span class="sn">4.2</span>系统运行策略与规则</h3>
+    <p><strong>调度规则</strong>：同线同向订单优先合并；满载率超过 80%† 触发连发；跨线换乘以主干站点为枢纽。<strong>安全规则</strong>：任何安全相关告警触发后，车辆先执行最小风险策略，再等待接管；远程接管优先于现场处置；接管期间该线路暂停接单。<strong>乘客规则</strong>：先下后上，行驶中不得开启车门，禁止站立于坡板区域；超载时系统应拒绝关门并提示。<strong>告警分级</strong>：一级（碰撞、冒烟、失联）立即停驶并通知保卫处；二级（感知置信度下降、电量低）降级运行；三级（舒适性异常、提示音故障）记录待修。</p>
+
+    <h3 class="sp"><span class="sn">4.3</span>系统运行约束</h3>
+    <p>速度上限 25 km/h、宿舍区夜间 15 km/h†；跟驰最小距离随车速动态调整；通信中断 5 s† 即判失效；单站同时充电不超过 2 台†；车内温度控制在 18—26 ℃†；任何情况下不得在坡度大于 8%† 的路段停靠上下客。法规约束包括交管备案、消防验收与个人信息保护影响评估，三者均为上线前置条件。</p>
+
+    <h3 class="sp"><span class="sn">4.4</span>系统运行模式与状态</h3>
+    <p>系统状态必须显式定义，否则“故障时算什么状态”会成为争议。共设七个状态：待命、载客运行、预约空驶、回场充电、远程接管、维护、停运。状态迁移由事件触发，且每次迁移写入运行日志，作为可用性统计与责任认定的依据。</p>
+
+    <div class="fig">
+      <svg viewBox="0 0 900 340" role="img" aria-label="CAMT 运行状态机">
+        <defs>
+          <marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 z" fill="#1D4763"/>
+          </marker>
+        </defs>
+        <g font-family="Noto Sans SC, sans-serif" font-size="12.5" fill="#14201D">
+          <rect x="36" y="70" width="112" height="46" fill="#F6F7F3" stroke="#CFD5CB"/><text x="92" y="99" text-anchor="middle">待命</text>
+          <rect x="230" y="70" width="130" height="46" fill="#14201D"/><text x="295" y="99" text-anchor="middle" fill="#EDEEE9">载客运行</text>
+          <rect x="230" y="196" width="130" height="46" fill="#F6F7F3" stroke="#CFD5CB"/><text x="295" y="225" text-anchor="middle">预约空驶</text>
+          <rect x="452" y="30" width="130" height="46" fill="#F6F7F3" stroke="#CFD5CB"/><text x="517" y="59" text-anchor="middle">回场充电</text>
+          <rect x="452" y="130" width="130" height="46" fill="#F2E4DF" stroke="#9C3A24"/><text x="517" y="159" text-anchor="middle" fill="#9C3A24">远程接管</text>
+          <rect x="452" y="230" width="130" height="46" fill="#F6F7F3" stroke="#CFD5CB"/><text x="517" y="259" text-anchor="middle">维护 / OTA</text>
+          <rect x="676" y="130" width="130" height="46" fill="#14201D"/><text x="741" y="159" text-anchor="middle" fill="#EDEEE9">停运</text>
+        </g>
+        <g stroke="#1D4763" stroke-width="1.1" fill="none" marker-end="url(#ar)" opacity=".85">
+          <path d="M148 93 L228 93"/>
+          <path d="M295 116 L295 194"/>
+          <path d="M360 93 L450 60"/>
+          <path d="M295 70 L450 145"/>
+          <path d="M360 210 L450 160"/>
+          <path d="M582 153 L674 153"/>
+          <path d="M517 176 L517 228"/>
+          <path d="M452 250 L400 220"/>
+        </g>
+        <g font-family="JetBrains Mono, monospace" font-size="9.5" fill="#6E7B76">
+          <text x="152" y="86">接单</text>
+          <text x="300" y="160">空载</text>
+          <text x="368" y="72">低电量</text>
+          <text x="352" y="130">故障 / 失联</text>
+          <text x="368" y="200">接管结束</text>
+          <text x="596" y="146">严重故障</text>
+          <text x="524" y="208">返场</text>
+          <text x="404" y="242">完成</text>
+        </g>
+      </svg>
+      <div class="figcap">图 7-1　运行状态机。深色为运营态，锈色为异常态。任一迁移写入日志，作为可用性统计（MoE）与事件责任认定的依据。</div>
+    </div>
+
+    <h3 class="sp"><span class="sn">5</span>用户需求</h3>
+    <p>用户需求共 18 条，按五组组织：服务可用性与覆盖（UR-01—04）、出行体验与无障碍（UR-05—07）、安全与应急（UR-08—11）、秩序环境与数据（UR-12—15）、运维与可维护性（UR-16—18）。每条需求均标注来源相关方与可测的验证准则，完整条文见表 5-1 至表 5-5。其中高优先级 11 条（UR-01、02、03、05、08、09、10、11、12、14、17）构成 SyRS 的必做集合。</p>
+
+    <h3 class="sp"><span class="sn">6.1</span>运行概念</h3>
+    <p>从用户视角看，系统做三件事：让人知道车在哪、让车按时到、让异常有人管。用户不需要理解感知算法，但需要知道“雨天会不会停运”“夜间能不能约到”“满载时下一班多久”。因此运行概念的文字优先描述可感知的行为与承诺，而不是技术能力。</p>
+
+    <h3 class="sp"><span class="sn">6.2</span>运行场景</h3>
+    <p>SC-1 至 SC-6 见第 03 章 3.4 节，含各场景派生需求。建议在评审时按场景逐条走查，确认每个场景至少有一条需求承接，反之每条需求至少能指回一个场景或业务需求——这就是第 08 章追溯矩阵的设计目的。</p>
+
+    <h3 class="sp"><span class="sn">6.3</span>采办概念</h3>
+    <p>采办分两期。一期为单线试点：2 台车、1 条主干线、6 个站点†，合同期 6 个月†，验收以 SC-1/SC-2 场景的 MoE 为准；二期依据一期结果扩容至 6 台、18 个站点†。合同结构建议“设备采购 + 服务运营 + 数据接口”三段式，避免把算法能力与运营责任捆在同一价格里；关键条款包括可用性下限、安全事件响应时限、备件供应周期、数据权属与退役处置责任。</p>
+
+    <h3 class="sp"><span class="sn">6.4</span>部署概念</h3>
+    <p>部署顺序受关键路径约束：地图采集与站点改造 → 充电位建设与消防验收 → 专网补点 → 车辆到场与调试 → 空载试跑 → 载人试运行 → 正式运营。每一阶段都设准入条件，例如消防未验收不得充电运营，专网覆盖率低于 95%† 不得进入载人阶段。部署期间保留人工小巴，且向师生公示替代方案。</p>
+
+    <h3 class="sp"><span class="sn">6.5</span>支持概念</h3>
+    <p>支持体系由四层构成：远程监控中心 7×24 值守，负责告警研判与接管；驻场运维 2 人†，负责整备、保洁与一级故障处置；供应商二级支持，负责算法、电池与关键总成；备件库与培训体系，覆盖常见故障与应急演练。培训须区分乘客引导、运维操作与接管资质三类，接管岗位须持证上岗。</p>
+
+    <h3 class="sp"><span class="sn">6.6</span>弃置概念</h3>
+    <p>弃置不是“车报废”这么简单。动力电池须交由具备资质的回收渠道，优先梯次利用于储能场景；车辆本体由供应商按合同拆解；站牌、充电桩等设施恢复原状或移交后续项目；个人数据须彻底销毁并出具证明；运营合同结束时须完成数据、备件与知识移交，避免学校被单一供应商锁定。</p>
+
+    <h3 class="sp"><span class="sn">7</span>项目约束</h3>
+    <p>除 BRS 第 7 章的约束外，StRS 需补充需求管理约束：任何需求变更须经变更控制委员会评估对成本、进度与安全的影响；基线冻结后，新增需求只能进入下一版本；每条需求必须有唯一编号、来源与验证方法，缺一不得进入基线。</p>
+
+    <h3 class="sp"><span class="sn">8.1</span>缩写与缩略语</h3>
+    <p>同 BRS 8.1，另增：MRC 最小风险策略；SP 系统过程；UR 用户需求；RVM 需求验证矩阵。</p>
+  </section>
+
+  <!-- ===== 08 追溯与自检 ===== -->
+  <section class="chapter" id="trace">
+    <div class="ch-head"><div class="ch-num">08</div>
+      <h2>追溯矩阵与评审自检<span class="en">TRACEABILITY &amp; REVIEW CHECK</span></h2>
+    </div>
+    <p class="lede">没有追溯矩阵的规格说明只是一份文档，不是需求基线。矩阵的作用是双向的：向上，证明每条需求都有来源；向下，证明每个业务目标都有承接。</p>
+
+    <div class="tbl-wrap">
+      <table class="data">
+        <caption>表 8-1　业务需求—相关方需求—运行场景追溯矩阵（RTM）</caption>
+        <colgroup><col style="width:12%"><col style="width:28%"><col style="width:34%"><col style="width:16%"><col style="width:10%"></colgroup>
+        <thead><tr><th>业务需求</th><th>核心诉求</th><th>承接的相关方需求</th><th>相关场景</th><th>覆盖</th></tr></thead>
+        <tbody>
+          <tr><td class="id">BR-01</td><td>全校区、全时段覆盖</td><td>UR-01、UR-02、UR-03、UR-04、UR-07</td><td>SC-2、SC-6</td><td>完整</td></tr>
+          <tr><td class="id">BR-02</td><td>高峰运力与候车时长</td><td>UR-03、UR-04、UR-06</td><td>SC-1</td><td>完整</td></tr>
+          <tr><td class="id">BR-03</td><td>恶劣天气与夜间连续性</td><td>UR-01、UR-02、UR-08、UR-13</td><td>SC-2、SC-3</td><td>完整</td></tr>
+          <tr><td class="id">BR-04</td><td>秩序、安全与消防</td><td>UR-08、UR-09、UR-10、UR-11、UR-12</td><td>SC-5、SC-6</td><td>完整</td></tr>
+          <tr><td class="id">BR-05</td><td>数据资产与示范价值</td><td>UR-15</td><td>SC-1</td><td>完整</td></tr>
+          <tr><td class="id">BR-06</td><td>全生命周期成本</td><td>UR-16、UR-17、UR-18</td><td>SC-4</td><td>完整</td></tr>
+          <tr><td class="id">BR-07</td><td>法规与无障碍合规</td><td>UR-05、UR-06、UR-11、UR-13</td><td>SC-2、SC-3</td><td>完整</td></tr>
+          <tr><td class="id">BR-08</td><td>隐私与数据合规</td><td>UR-14、UR-15</td><td>SC-1</td><td>完整</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="matrix-note">
+      <span style="--c:#1D4763">8 / 8 业务需求均有下游承接</span>
+      <span style="--c:#9C3A24">18 / 18 用户需求均可回溯到业务需求或相关方</span>
+      <span style="--c:#A8752A">6 / 6 场景均派生至少一条需求</span>
+    </div>
+
+    <h3><span class="h3-n">8.1</span>评审自检：按教材三项准则</h3>
+    <p>教材在需求评审一节给出了三条判定线：交付物完整性、对需要或上级需求的满足情况、需求条目与需求集的质量。逐条自检的结果如下表，未能达标的项如实留出，不做过早的“全部合格”结论。</p>
+
+    <div class="tbl-wrap">
+      <table class="data">
+        <caption>表 8-2　评审自检记录</caption>
+        <colgroup><col style="width:24%"><col style="width:10%"><col style="width:66%"></colgroup>
+        <thead><tr><th>检查项</th><th>结论</th><th>说明与待办</th></tr></thead>
+        <tbody>
+          <tr><td>交付物完整性</td><td>基本通过</td><td>BRS、StRS、RTM、MoE 均已具备；尚缺《需求验证计划》与正式评审记录，需在提交前补齐。</td></tr>
+          <tr><td>需要到需求的覆盖</td><td>通过</td><td>18 条用户需求均标注来源相关方；BR-01 至 BR-08 均有承接。</td></tr>
+          <tr><td>上级需求的下级满足</td><td>部分通过</td><td>StRS 已覆盖 BRS 全部条目，但 SyRS 尚未编写，因此“业务需求由系统需求满足”这一层暂无法验证。</td></tr>
+          <tr><td>条目可验证性</td><td>基本通过</td><td>18 条中 16 条给出了量化 MoE；UR-05 的“满足国家无障碍规定”需补充具体标准条款号。</td></tr>
+          <tr><td>无歧义与无冲突</td><td>通过</td><td>速度、噪声、响应时限等指标在全篇保持一致；UR-02 与 UR-12 的潜在冲突已通过“站点不占人行专用道”约束消解。</td></tr>
+          <tr><td>假设值可替换</td><td>待办</td><td>全部 † 标注值需在基线评审前由校方数据或实测替换，尤其 2.4 km²、站点数、预算与职工编制。</td></tr>
+          <tr><td>相关方一致性</td><td>待办</td><td>后勤集团（S-05）与保险公司（S-12）尚未书面确认，需补充访谈纪要与利益补偿条款。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3><span class="h3-n">8.2</span>留给小组讨论的五个问题</h3>
+    <p>其一，SoI 是否收敛到这个系统，还是应把“充电设施”独立为单独的使能系统？其二，免费模式下的 OD 统计如何在不采集个人标识的前提下达到 95%† 完整率？其三，跨校区段的交管许可是按“示范运营”还是“客运经营”申报，这决定了车辆属性与保险条款。其四，后勤集团的转岗规模与补偿方案由谁定，若不定，S-05 的 −1 态度会在运营期转化为执行阻力。其五，首期试点选哪条线——选客流最大的线能证明能力但风险最高，选客流中等的线更稳妥，这是典型的风险偏好选择，需要在评审会上明确表态。</p>
+
+    <div class="box">
+      <div class="box-t">一句话结论 / TAKEAWAY</div>
+      <ul>
+        <li>业务分析的价值在于把“做一个系统”变成“解决一个被定义清楚的问题”，方案类是这一阶段的产出，不是技术选型的终点。</li>
+        <li>ConOps 与 OpsCon 分属组织层与系统层，前者定“做不做、做多大”，后者定“在具体场景里怎么表现”，两者的混用是需求漂移的常见起点。</li>
+        <li>相关方靠五类交互要素穷举、靠矩阵排序、靠抽象化收敛；需求靠冲突协商与可验证准则从“需要”升级为“需求”。</li>
+        <li>BRS 与 StRS 的完整度不由篇幅衡量，而由追溯矩阵与 MoE 衡量——每条需求都能指回一个人、一个场景、一个可测的数。</li>
+      </ul>
+    </div>
+  </section>
+
+  </main>
+</div>
+
+<footer class="foot">
+  <div class="inner">
+    <div><b>文档信息</b>系统工程 · 第4章 概念定义 · 小组作业2<br>BRS-CAMT-v1.0 / StRS-CAMT-v1.0　2026-11-18</div>
+    <div><b>依据</b>ISO/IEC/IEEE 29148:2018 表4-1、表4-5；ISO/IEC/IEEE 15288:2023；郭宝柱《系统工程》第4章；INCOSE 系统工程手册。</div>
+    <div><b>说明</b>带 † 数值为课程讨论设定值，非实测数据；本文用于小组讨论与课堂评审，不构成学校决策依据。</div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.0/dist/echarts.min.js"></script>
+<script>
+(function(){
+  function fail(id){
+    var el=document.getElementById(id);
+    if(el){el.style.display='block';}
+    var box=el&&el.previousElementSibling;
+    if(box&&box.id){box.style.display='none';}
+  }
+  function boot(){
+    if(typeof echarts==='undefined'){ fail('bar-fallback'); fail('scatter-fallback'); return; }
+    var ink='#14201D', muted='#6E7B76', line='#CFD5CB', paper='#F6F7F3';
+    var sans='"Noto Sans SC","PingFang SC",sans-serif';
+
+    /* 方案对比 */
+    var barEl=document.getElementById('bar');
+    if(barEl){
+      var chart=echarts.init(barEl);
+      var names=['A 加密校车 + 人工','B 自动驾驶微循环','C 两轮优化 + 连廊','D 组合（人机并行）'];
+      var vals=[3.13,3.63,3.13,4.38];
+      chart.setOption({
+        grid:{left:200,right:64,top:10,bottom:30},
+        xAxis:{type:'value',min:0,max:5,axisLine:{lineStyle:{color:line}},splitLine:{lineStyle:{color:'#E6E9E2'}},axisLabel:{color:muted,fontFamily:'JetBrains Mono',interval:1}},
+        yAxis:{type:'category',data:names,inverse:true,axisLine:{lineStyle:{color:line}},axisTick:{show:false},axisLabel:{color:ink,fontSize:11.5,fontFamily:sans,width:172,overflow:'truncate',align:'right'}},
+        series:[{
+          type:'bar',barWidth:16,
+          data:vals.map(function(v,i){
+            return {value:v,itemStyle:{color:i===3?'#9C3A24':(i===1?'#1D4763':'#8FA0A8'),borderRadius:0}};
+          }),
+          label:{show:true,position:'right',distance:8,color:ink,fontFamily:'JetBrains Mono',fontSize:12,formatter:'{c}'},
+          markLine:{silent:true,symbol:'none',lineStyle:{color:'#B9C2B6',type:'dashed'},
+            data:[{xAxis:3.5,label:{show:false}}]}
+        }]
+      });
+      window.addEventListener('resize',function(){chart.resize();});
+    }
+
+  }
+  if(document.readyState==='complete'){boot();}else{window.addEventListener('load',boot);}
+})();
+</script>
+</body>
+</html>
